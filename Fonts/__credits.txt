@@ -1,0 +1,5 @@
+Main Font:
+	Supreme - https://www.fontshare.com/fonts/supreme
+
+Japanese:
+	Noto Serif JP - https://fonts.google.com/noto/specimen/Noto+Serif+JP

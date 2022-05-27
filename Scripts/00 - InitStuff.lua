@@ -6,7 +6,7 @@ sh = SCREEN_HEIGHT
 THEMEINFO = {
 	name = 'Eclipse',
 	version = '0.8',
-	date = '5-24-2022'
+	date = 'MM-DD-YYYY'
 }
 
 FONTSIZE = {

@@ -4,7 +4,7 @@ local stageStats = {
 	steps = GAMESTATE:GetCurrentSteps(),
 	score = SCOREMAN:GetMostRecentScore() or SCOREMAN:GetTempReplayScore(),
 	pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(),
-	judgeSetting = forcedScreenEntryJudgeWindow
+	judgeSetting = (PREFSMAN:GetPreference("SortBySSRNormPercent") and 4 or GetTimingDifficulty())
 }
 local scale16x9 = {
 	sw = 854, sh = 480
@@ -67,6 +67,7 @@ local sizes = {
 		w = (210 / 1280) * scale16x9.sw,
 		h = (100 / 720) * scale16x9.sh
 	},
+
 
 	leaderboardScore = {
 		w = (440 / 1280) * scale16x9.sw,

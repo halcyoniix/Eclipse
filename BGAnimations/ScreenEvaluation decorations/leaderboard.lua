@@ -17,17 +17,34 @@ local t = Def.ActorFrame{
 
 local makeScores = function(params)
 	local f = Def.ActorFrame{}
+	local score = nil
 	local s = function(i)
 	return 
 		Def.ActorFrame {
+			OnCommand = function(self)
+				self:addy((sizes.leaderboardScore.h + sizes.vPadding) * i)
+			end,
 			Def.Quad {
 				Name = 'bg',
 				InitCommand = function(self)
 					self:zoomto(sizes.leaderboardScore.w, sizes.leaderboardScore.h)
 					self:diffuse(0.2,0.2,0.2,1)
-					self:addy((sizes.leaderboardScore.h + sizes.vPadding) * i)
 				end
 			},
+			--[[LoadSizedFont('header') .. {
+				Name = 'percentage',
+				OnCommand = function(self)
+					self:settext('ass'):halign(0):valign(0)
+					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
+				end
+			}--]]
+			LoadSizedFont('header') .. {
+				Name = 'percentage',
+				OnCommand = function(self)
+					self:settext('ass'):halign(0):valign(0)
+					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
+				end
+			}
 		}
 	end
 	for i = 0,5 do

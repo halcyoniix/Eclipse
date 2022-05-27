@@ -28,9 +28,9 @@ local unHighlightedAlpha = 0
 
 -- the dot sizes
 -- the "classic" default is 1.0
-local dotLineLength = 0.75
-local dotLineUpperBound = 1.2
-local dotLineLowerBound = 0.7
+local dotLineLength = 04
+local dotLineUpperBound = 0.6
+local dotLineLowerBound = 0.5
 -- length of the dot lines for the mine X
 local mineXSize = 3
 local mineXThickness = 1

@@ -1,3 +1,4 @@
+local util = Var('util')
 local sizes = Var('sizes')
 local stageStats = Var('stageStats')
 
@@ -14,167 +15,8 @@ local t = Def.ActorFrame{
 	},
 }
 
-local function gatherRadarValue(radar, score)
-	local n = score:GetRadarValues():GetValue(radar)
-	if n == -1 then
-		return stageStats.pss:GetRadarActual():GetValue(radar)
-	end
-	return n
-end
-
-local judges = {
-	'TapNoteScore_W1',
-	'TapNoteScore_W2',
-	'TapNoteScore_W3',
-	'TapNoteScore_W4',
-	'TapNoteScore_W5',
-	'TapNoteScore_Miss',
-}
-
-local extraJudges = {
-	{'Holds','RadarCategory_Holds'},
-	{'Rolls','RadarCategory_Rolls'},
-	{'Mines','RadarCategory_Mines'}
-}
-
-local totalTaps = 0
-
-for k,v in pairs(judges) do
-	totalTaps = totalTaps + stageStats.score:GetTapNoteScore(v)
-end
-
-local makeJudgments = function()
-	local f = Def.ActorFrame {}
-	local bar = function(i)
-		local jud = stageStats.score:GetTapNoteScore(judges[i])
-		return Def.ActorFrame {
-			InitCommand = function(self)
-				self:addy(i*sizes.judgment.barPadding)
-				self:RunCommandsOnChildren(function(self)
-					self:halign(0)
-				end)
-			end,
-			Def.Quad {
-				Name = 'barBg',
-				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
-					self:diffuse(0.3,0.3,0.3,1)
-				end
-			},
-			Def.Quad {
-				Name = 'barFill',
-				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
-					self:diffuse(colorByJudgment(judges[i]))
-					self:cropright(1)
-					self:sleep(0.2)
-					self:smooth(0.4)
-					self:cropright( 1-(jud / totalTaps))
-				end
-			},
-			Def.ActorFrame {
-				Name = 'judgmentThingy',
-				InitCommand = function(self)
-					self:y(-sizes.judgment.barGirth - sizes.vPadding)
-				end,
-				LoadSizedFont('small') .. {
-					Name = 'judgmentName',
-					InitCommand = function(self)
-						self:settext(THEME:GetString('TapNoteScore', judges[i]))
-						self:halign(0)
-						self:maxwidth(150)
-					end
-				},
-				LoadSizedFont('small') .. {
-					Name = 'judgmentCount',
-					OnCommand = function(self)
-						self:settext(jud)
-						self:halign(1)
-						self:x(sizes.judgment.barLength)
-					end
-				},
-				LoadSizedFont('small') .. {
-					Name = 'judgmentCountPercentage',
-					OnCommand = function(self)
-						self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
-						self:diffuse(0.5,0.5,0.5,1)
-						self:halign(1)
-						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetZoomedWidth() - sizes.hPadding/4)
-					end
-				},
-			},
-		}
-	end
-
-	for k,v in pairs(judges) do
-		f[#f+1] = bar(k)
-	end
-
-	return f
-end
 
 
-local makeExtraJudgments = function()
-	local f = Def.ActorFrame {}
-	local bar = function(i)
-		local rV = gatherRadarValue(extraJudges[i][2], stageStats.score)
-		local rP = stageStats.pss:GetRadarPossible():GetValue(extraJudges[i][2])
-		local num = rV ..'/'.. rP
-		return Def.ActorFrame {
-			InitCommand = function(self)
-				self:addy(i*sizes.judgment.barPadding + sizes.judgment.barPadding*#judges)
-				self:RunCommandsOnChildren(function(self)
-					self:halign(0)
-				end)
-			end,
-			Def.Quad {
-				Name = 'barBg',
-				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
-					self:diffuse(0.3,0.3,0.3,1)
-				end
-			},
-			Def.Quad {
-				Name = 'barFill',
-				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
-					self:cropright(1)
-					self:sleep(0.2)
-					self:smooth(0.4)
-					self:cropright(1 - (rV / rP))
-				end
-			},
-			Def.ActorFrame {
-				Name = 'judgmentThingy',
-				InitCommand = function(self)
-					self:y(-sizes.judgment.barGirth - sizes.vPadding)
-				end,
-				LoadSizedFont('small') .. {
-					Name = 'judgmentName',
-					InitCommand = function(self)
-						self:settext(THEME:GetString('OptionTitles', extraJudges[i][1]))
-						self:halign(0)
-						self:maxwidth(150)
-					end
-				},
-				LoadSizedFont('small') .. {
-					Name = 'judgmentCount',
-					OnCommand = function(self)
-						self:settext(num)
-						self:halign(1)
-						self:x(sizes.judgment.barLength)
-					end
-				},
-			},
-		}
-	end
-
-	for k,v in pairs(extraJudges) do
-		f[#f+1] = bar(k)
-	end
-
-	return f
-end
 
 t[#t+1] = Def.ActorFrame {
 	Name = 'judgmentData',
@@ -276,12 +118,12 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand = function(self)
 			self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding, -sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*2))
 		end,
-		makeJudgments() .. {},
-		makeExtraJudgments() .. {},
+		util.makeJudgments() .. {},
+		util.makeExtraJudgments() .. {},
 		Def.ActorFrame {
 			Name = 'judgmentData',
 			InitCommand = function(self)
-				self:y(-sizes.judgment.barGirth - sizes.vPadding + (((#extraJudges + #judges) + 1) * sizes.judgment.barPadding))
+				self:y(-sizes.judgment.barGirth - sizes.vPadding + (((3 + 6) + 1) * sizes.judgment.barPadding)) -- never do this
 			end,
 			LoadSizedFont('small') .. {
 				Name = 'judgmentName',
@@ -342,6 +184,43 @@ t[#t+1] = Def.ActorFrame {
 			self:y( -sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*4) + sizes.lifeGraph.h )
 		end
 	},
+	Def.ActorFrame{
+		Name = 'timingGraph',
+		InitCommand = function(self)
+			self:y(-sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*5) + sizes.lifeGraph.h)
+		end,
+		LoadActorWithParams('pdf.lua', {sizes = sizes}) .. {
+			InitCommand = function(self)
+				self:RunCommandsOnChildren(function(self)
+					self:halign(0)
+				end)
+			end,
+			UIElements.QuadButton(1,1) .. {
+				Name = 'BG',
+				OnCommand = function(self)
+					self:zoomto(sizes.lifeGraph.w, sizes.lifeGraph.h):valign(0)
+					self:diffuse(0.2,0.2,0.2,1)
+				end,
+				MouseOverCommand = function(self)
+					local s, cb = util.calcStatData(stageStats.score, 4)
+					local txt = string.format(
+						'%s: %5.2fms\n%s: %5.2fms\n%s: %5.2fms\n%s: %s/%s',
+						'Mean', s.mean,
+						'Std Dev', s.sd,
+						'Largest', s.largest,
+						'Left/Right CBs', cb[1] + cb[2], cb[3] + cb[4]
+					)
+					TOOLTIP:SetText(txt)
+					TOOLTIP:Show()
+				end,
+				MouseOutCommand = function(self)
+					TOOLTIP:Hide()
+				end
+			}
+		},
+		util.makeRatios(util.calcAccData(stageStats.score)) .. {}
+	},
+
 }
 
 return t

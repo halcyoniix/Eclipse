@@ -33,12 +33,20 @@ t[#t+1] = Def.ActorFrame {
 				self:halign(0):valign(0)
 				self:maxwidth(294)
 				if stageStats.score then
-					local percent = stageStats.score:GetWifeScore() * 100
-					local grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percent / 100)))
-					self:settextf('%s %s', grade, string.format('%5.2f',percent) .. '%')
-					self:diffuse(colorByGrade(GetGradeFromPercent(percent / 100)))
+					local p = stageStats.score:GetWifeScore() * 100
+					local grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(p / 100)))
+					self:settextf('%s %5.2f%%', grade, p)
+					self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
 				else
 					self:settext('wtf no score?')
+				end
+			end,
+			SelectedEvalScoreMessageCommand = function(self, params)
+				if params.score then
+					local p = params.score.percent
+					local g = params.score.grade
+					self:settextf('%s %5.2f%%', g, p)
+					self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
 				end
 			end
 		},
@@ -60,6 +68,13 @@ t[#t+1] = Def.ActorFrame {
 					self:settextf('%5.2f', ssr)
 					self:diffuse(colorByMSD(ssr))
 					self:maxwidth(120)
+				end
+			end,
+			SelectedEvalScoreMessageCommand = function(self, params)
+				if params.score then
+					local ssr = params.score.ssr
+					self:settextf('%5.2f', ssr)
+					self:diffuse(colorByMSD(ssr))
 				end
 			end
 		},
@@ -139,6 +154,11 @@ t[#t+1] = Def.ActorFrame {
 					self:settext(stageStats.score:GetMaxCombo())
 					self:halign(1)
 					self:x(sizes.judgment.barLength)
+				end,
+				SelectedEvalScoreMessageCommand = function(self, params)
+					if params.score then
+						self:settext(params.score.hs:GetMaxCombo())
+					end
 				end
 			},
 		},
@@ -174,7 +194,7 @@ t[#t+1] = Def.ActorFrame {
 			if stageStats.song then
 				self:SetWithoutStageStats(stageStats.pss, stageStats.song:GetStepsSeconds() / stageStats.score:GetMusicRate())
 			end
-		end
+		end,
 	},
 	Def.Quad {
 		OnCommand = function(self)
@@ -218,7 +238,7 @@ t[#t+1] = Def.ActorFrame {
 				end
 			}
 		},
-		util.makeRatios(util.calcAccData(stageStats.score)) .. {}
+		util.makeRatios() .. {}
 	},
 
 }

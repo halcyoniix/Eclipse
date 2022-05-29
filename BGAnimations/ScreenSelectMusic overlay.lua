@@ -32,7 +32,7 @@ t[#t+1] = Def.ActorFrame{
 				local key = 'X8ca18c993d793f4bc2bb63a40139170a901504bc'
 				local score = SCOREMAN:GetScoresByKey(key)
 
-				for k,v in pairs(score['1.15x']:GetScores()) do
+				for k,v in pairs(score['1.0x']:GetScores()) do
 					if v:HasReplayData() then
 						SCREENMAN:GetTopScreen():ShowEvalScreenForScore(v)
 						break

@@ -29,6 +29,9 @@ end
 
 local t = Def.ActorFrame {
 	OnCommand = function(self)
+		self:queuecommand('Prep')
+	end,
+	PrepCommand = function(self)
 		prep()
 		for k,v in ipairs(offsets) do
 			if v >= 180 then

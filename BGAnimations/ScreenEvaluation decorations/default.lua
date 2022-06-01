@@ -378,38 +378,43 @@ end
 
 
 local allTheScores = {}
-local maxPerPage = 6
+local pageLimit = 6
+local curPage = 1
 local currentSelectedScore
 util.makeScores = function(score)
-	local f = Def.ActorFrame{}
 	local curRate = string.format('%.1fx',score:GetMusicRate()) -- haha
 	for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
 		if rate == curRate then
-			for _, curScore in pairs(scoreTable) do
-				local percentage = curScore:GetWifeScore() * 100
-				if percentage ~= 0 then
-					local a = {0,0,0,0,0,0}
-					for i = 1,#judges do
-						a[i] = curScore:GetTapNoteScore(judges[i])
-					end
-					table.insert(allTheScores, {
-						hs = curScore,
-						judgments = a,
-						percent = percentage,
-						grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
-						date = curScore:GetDate(),
-						ssr = string.format('%5.2f',curScore:GetSkillsetSSR('Overall'))
-					})
+		for _, curScore in pairs(scoreTable) do
+			local percentage = curScore:GetWifeScore() * 100
+			if percentage ~= 0 then
+				local a = {0,0,0,0,0,0}
+				for i = 1,#judges do
+					a[i] = curScore:GetTapNoteScore(judges[i])
 				end
+				table.insert(allTheScores, {
+					hs = curScore,
+					judgments = a,
+					percent = percentage,
+					grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
+					date = curScore:GetDate(),
+					ssr = string.format('%5.2f',curScore:GetSkillsetSSR('Overall')),
+					rate = rate
+				})
 			end
+		end
 		end
 	end
 
-	local s = function(i)
-	return 
-		Def.ActorFrame {
+	local s = function(i, p)
+		local y_pos = math.mod(i-1, pageLimit)
+		return Def.ActorFrame {
 			OnCommand = function(self)
-				self:addy((sizes.leaderboardScore.h + sizes.vPadding/2) * (i-1))
+				self:addy((sizes.leaderboardScore.h + sizes.vPadding/2) * (y_pos))
+				self:playcommand('CheckPage', {page = p})
+			end,
+			CheckPageCommand = function(self, params)
+				self:visible(params.page == curPage)
 			end,
 			UIElements.QuadButton(1,1) .. {
 				Name = 'bg',
@@ -463,6 +468,15 @@ util.makeScores = function(score)
 				end
 			},
 			LoadSizedFont('small') .. {
+				Name = 'rate',
+				OnCommand = function(self)
+					local rate = allTheScores[i].rate
+					self:settext(rate)
+					self:halign(1):valign(0)
+					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetZoomedWidth() - sizes.hPadding*2, sizes.hPadding/2)
+				end
+			},
+			LoadSizedFont('small') .. {
 				Name = 'date',
 				OnCommand = function(self)
 					self:settext(allTheScores[i].date):diffuse(0.5,0.5,0.5,1)
@@ -472,11 +486,15 @@ util.makeScores = function(score)
 			},
 		}
 	end
+
+	local f = Def.ActorFrame{}
+
 	for i = 1,#allTheScores do
-		if i <= maxPerPage then
-			f[#f+1] = s(i)
-		end
+		local page = math.floor((i-1)/pageLimit) + 1
+		if not f[page] then f[page] = Def.ActorFrame{} end
+		f[page][#f[page]+1] = s(i, page)
 	end
+
 	return f
 end
 

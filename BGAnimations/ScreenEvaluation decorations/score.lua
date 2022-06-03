@@ -41,10 +41,10 @@ t[#t+1] = Def.ActorFrame {
 					self:settext('wtf no score?')
 				end
 			end,
-			SelectedEvalScoreMessageCommand = function(self, params)
-				if params.score then
-					local p = params.score.percent
-					local g = params.score.grade
+			SelectedEvalScoreMessageCommand = function(self, curScore)
+				if curScore.score then
+					local p = curScore.percent
+					local g = curScore.grade
 					self:settextf('%s %5.2f%%', g, p)
 					self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
 				end
@@ -70,9 +70,9 @@ t[#t+1] = Def.ActorFrame {
 					self:maxwidth(120)
 				end
 			end,
-			SelectedEvalScoreMessageCommand = function(self, params)
-				if params.score then
-					local ssr = params.score.ssr
+			SelectedEvalScoreMessageCommand = function(self, curScore)
+				if curScore.score then
+					local ssr = curScore.ssr
 					self:settextf('%5.2f', ssr)
 					self:diffuse(colorByMSD(ssr))
 				end
@@ -155,9 +155,9 @@ t[#t+1] = Def.ActorFrame {
 					self:halign(1)
 					self:x(sizes.judgment.barLength)
 				end,
-				SelectedEvalScoreMessageCommand = function(self, params)
-					if params.score then
-						self:settext(params.score.hs:GetMaxCombo())
+				SelectedEvalScoreMessageCommand = function(self, curScore)
+					if curScore.score then
+						self:settext(curScore.score:GetMaxCombo())
 					end
 				end
 			},
@@ -215,6 +215,9 @@ t[#t+1] = Def.ActorFrame {
 					self:halign(0)
 				end)
 			end,
+			SelectedEvalScoreMessageCommand = function(self, params)
+				self:playcommand('Prep', params)
+			end,
 			UIElements.QuadButton(1,1) .. {
 				Name = 'BG',
 				OnCommand = function(self)
@@ -242,5 +245,6 @@ t[#t+1] = Def.ActorFrame {
 	},
 
 }
+
 
 return t

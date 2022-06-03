@@ -12,7 +12,7 @@ local t = Def.ActorFrame{
 		InitCommand = function(self)
 			self:zoomto(sizes.leaderboardContainer.w + sizes.border, sizes.leaderboardContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
-			self:visible(false)
+			self:visible(true)
 		end
 	},
 }
@@ -25,7 +25,18 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand = function(self)
 		self:y((-sizes.leaderboardContainer.h/2) + sizes.leaderboardScore.h / 2)
 	end,
-	util.makeScores(stageStats.score) .. {}
+	util.makeScores(stageStats.score) .. {},
+	LoadSizedFont('header') .. {
+		Name = 'pageCount',
+		OnCommand = function(self)
+			self:settext('Page 1 of 2')
+			self:valign(1)
+			self:y(sizes.leaderboardContainer.h - (sizes.leaderboardScore.h / 2) - sizes.vPadding)
+		end,
+		UpdateLeaderboardScorePageMessageCommand = function(self, params)
+			--ms.ok(params)
+		end
+	},
 }
 
 return t

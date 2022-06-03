@@ -20,11 +20,16 @@ local noteCount = profile:GetTotalTapsAndHolds()
 local playerRating = profile:GetPlayerRating()
 
 
+
 local playerStats = {
 	string.format('%s: %5.2f', profileName, profile:GetPlayerRating()),
 	string.format('%s %s', playCount, THEME:GetString('GeneralInfo', 'ProfilePlays')),
 	string.format('%s %s', noteCount, THEME:GetString('GeneralInfo', 'ProfileTapsHit')),
 }
+
+if DLMAN:IsLoggedIn() then
+	playerStats[1] = string.format('%s: %5.2f', DLMAN:GetUsername(), DLMAN:GetSkillsetRating('Overall'))
+end
 
 local miscStats = {
 	GAMESTATE:GetEtternaVersion(),
@@ -74,17 +79,54 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand = function(self)
 		self:x(scx)
 		self:SetUpdateFunction(function()
-		local year = Year()
-		local month = MonthOfYear() + 1
-		local day = DayOfMonth()
-		local hour = Hour()
-		local minute = Minute()
-		local second = Second()
-		self:GetChild("currentTime"):settextf("%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second)
-		local sessiontime = GAMESTATE:GetSessionTime()
-		self:GetChild('sessionTime'):settextf('%s: %s', THEME:GetString('GeneralInfo', 'SessionTime'), SecondsToHHMMSS(sessiontime))
+			local year = Year()
+			local month = MonthOfYear() + 1
+			local day = DayOfMonth()
+			local hour = Hour()
+			local minute = Minute()
+			local second = Second()
+			self:GetChild("currentTime"):settextf("%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second)
+			local sessiontime = GAMESTATE:GetSessionTime()
+			self:GetChild('sessionTime'):settextf('%s: %s', THEME:GetString('GeneralInfo', 'SessionTime'), SecondsToHHMMSS(sessiontime)) 
 		end)
 	end,
+	--[[BeginCommand = function(self)
+		if DLMAN:IsLoggedIn() then
+			local username = playerConfig:get_data().UserName
+			local token = playerConfig:get_data().PasswordToken
+			if username ~= nil and #username > 0 then
+				if token ~= nil and #token > 0 then
+					DLMAN:LoginWithToken(username, token)
+				end
+			end
+		end
+	end,
+	LoginMessageCommand = function(self)
+		self:playcommand("Set")
+		ms.ok("Login Successful")
+
+		playerConfig:get_data().UserName = DLMAN:GetUsername()
+		playerConfig:get_data().PasswordToken = DLMAN:GetToken()
+		playerConfig:set_dirty()
+		playerConfig:save()
+	end,
+	LogOutMessageCommand = function(self)
+		ms.ok("Logged out")
+
+		playerConfig:get_data().UserName = ""
+		playerConfig:get_data().PasswordToken = ""
+		playerConfig:set_dirty()
+		playerConfig:save()
+	end,
+	LoginFailedMessageCommand = function(self)
+		self:playcommand("Set")
+		ms.ok("Login Failed")
+
+		playerConfig:get_data().UserName = ""
+		playerConfig:get_data().PasswordToken = ""
+		playerConfig:set_dirty()
+		playerConfig:save()
+	end,--]]
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)

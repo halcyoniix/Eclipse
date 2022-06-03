@@ -69,7 +69,7 @@ local sizes = {
 	},
 
 	leaderboardScore = {
-		w = (460 / 1280) * scale16x9.sw,
+		w = (440 / 1280) * scale16x9.sw,
 		h = (50 / 720) * scale16x9.sh,
 	}
 }
@@ -194,9 +194,9 @@ util.makeJudgments = function()
 					self:smooth(0.2)
 					self:cropright( 1-(jud / totalTaps))
 				end,
-				SelectedEvalScoreMessageCommand = function(self, params)
-					if params.score then
-						local jud = params.score.judgments[i]
+				SelectedEvalScoreMessageCommand = function(self, curScore)
+					if curScore.score then
+						local jud = curScore.judgments[i]
 						self:finishtweening():smooth(0.2):cropright( 1-(jud / totalTaps))
 					end
 				end
@@ -221,9 +221,9 @@ util.makeJudgments = function()
 						self:halign(1)
 						self:x(sizes.judgment.barLength)
 					end,
-					SelectedEvalScoreMessageCommand = function(self, params)
-						if params.score then
-							local jud = params.score.judgments[i]
+					SelectedEvalScoreMessageCommand = function(self, curScore)
+						if curScore.score then
+							local jud = curScore.judgments[i]
 							self:settext(jud)
 						end
 					end
@@ -236,9 +236,9 @@ util.makeJudgments = function()
 						self:halign(1)
 						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetZoomedWidth() - sizes.hPadding/4)
 					end,
-					SelectedEvalScoreMessageCommand = function(self, params)
-					if params.score then
-							local jud = params.score.judgments[i]
+					SelectedEvalScoreMessageCommand = function(self, curScore)
+						if curScore.score then
+							local jud = curScore.judgments[i]
 							self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
 							self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetZoomedWidth() - sizes.hPadding/4)
 						end
@@ -251,7 +251,6 @@ util.makeJudgments = function()
 	for k,v in pairs(judges) do
 		f[#f+1] = bar(k)
 	end
-
 	return f
 end
 
@@ -316,7 +315,6 @@ util.makeExtraJudgments = function()
 
 	return f
 end
-
 util.makeRatios = function()
 	local accData = util.calcAccData(stageStats.score)
 	local fuck = {accData.ma, accData.pa}
@@ -357,10 +355,10 @@ util.makeRatios = function()
 						self:halign(1)
 						self:x(sizes.judgment.barLength)
 					end,
-					SelectedEvalScoreMessageCommand = function(self, params)
-						local accData = util.calcAccData(params.score.hs)
-						local fuck = {accData.ma, accData.pa}
-						if params.score then
+					SelectedEvalScoreMessageCommand = function(self, curScore)
+						if curScore.score then
+							local accData = util.calcAccData(curScore.score)
+							local fuck = {accData.ma, accData.pa}
 							self:settextf('%.1f:1', fuck[i] or '??')
 						end
 					end
@@ -376,15 +374,13 @@ util.makeRatios = function()
 	return f
 end
 
-
 local allTheScores = {}
 local pageLimit = 6
 local curPage = 1
 local currentSelectedScore
-util.makeScores = function(score)
-	local curRate = string.format('%.1fx',score:GetMusicRate()) -- haha
-	for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
-		if rate == curRate then
+local curRate = string.format('%.1fx',stageStats.score:GetMusicRate()) -- haha
+for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
+	if rate == curRate then
 		for _, curScore in pairs(scoreTable) do
 			local percentage = curScore:GetWifeScore() * 100
 			if percentage ~= 0 then
@@ -393,7 +389,7 @@ util.makeScores = function(score)
 					a[i] = curScore:GetTapNoteScore(judges[i])
 				end
 				table.insert(allTheScores, {
-					hs = curScore,
+					score = curScore,
 					judgments = a,
 					percent = percentage,
 					grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
@@ -403,14 +399,17 @@ util.makeScores = function(score)
 				})
 			end
 		end
-		end
 	end
+end
+
+
+util.makeScores = function(score)
 
 	local s = function(i, p)
 		local y_pos = math.mod(i-1, pageLimit)
 		return Def.ActorFrame {
 			OnCommand = function(self)
-				self:addy((sizes.leaderboardScore.h + sizes.vPadding/2) * (y_pos))
+				self:addy(sizes.vPadding + (sizes.leaderboardScore.h + sizes.vPadding/2) * (y_pos))
 				self:playcommand('CheckPage', {page = p})
 			end,
 			CheckPageCommand = function(self, params)
@@ -420,19 +419,19 @@ util.makeScores = function(score)
 				Name = 'bg',
 				OnCommand = function(self)
 					self:zoomto(sizes.leaderboardScore.w, sizes.leaderboardScore.h)
-					self:diffuse(0.1,0.1,0.1,1)
+					self:diffuse(0.15,0.15,0.15,1)
 				end,
 				MouseOverCommand = function(self)
 					self:finishtweening():smooth(0.1):diffuse(0.2,0.2,0.2,1)
 					self:GetParent():finishtweening():smooth(0.1):zoom(1.01)
 				end,
 				MouseOutCommand = function(self)
-					self:finishtweening():smooth(0.1):diffuse(0.1,0.1,0.1,1)
+					self:finishtweening():smooth(0.1):diffuse(0.15,0.15,0.15,1)
 					self:GetParent():finishtweening():smooth(0.1):zoom(1)
 				end,
 				MouseDownCommand = function(self)
 					if currentSelectedScore ~= i then
-						MESSAGEMAN:Broadcast('SelectedEvalScore', {score = allTheScores[i]})
+						MESSAGEMAN:Broadcast('SelectedEvalScore', allTheScores[i])
 					end
 					currentSelectedScore = i
 				end
@@ -479,7 +478,8 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'date',
 				OnCommand = function(self)
-					self:settext(allTheScores[i].date):diffuse(0.5,0.5,0.5,1)
+					local date = allTheScores[i].date
+					self:settext(date):diffuse(0.5,0.5,0.5,1)
 					self:halign(0):valign(0)
 					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, sizes.hPadding/2)
 				end
@@ -487,7 +487,11 @@ util.makeScores = function(score)
 		}
 	end
 
-	local f = Def.ActorFrame{}
+	local f = Def.ActorFrame{
+		OnCommand = function(self)
+			MESSAGEMAN:Broadcast('UpdateLeaderboardScorePage', {page = curPage})
+		end
+	}
 
 	for i = 1,#allTheScores do
 		local page = math.floor((i-1)/pageLimit) + 1

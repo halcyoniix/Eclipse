@@ -405,6 +405,7 @@ end
 
 util.makeScores = function(score)
 
+	util.selectedScore = score
 	local s = function(i, p)
 		local y_pos = math.mod(i-1, pageLimit)
 		return Def.ActorFrame {
@@ -516,6 +517,7 @@ t[#t+1] = LoadActorWithParams('score.lua', {
 t[#t+1] = LoadActorWithParams('scatterplot.lua', {
 	sizes = sizes,
 	stageStats = stageStats,
+	util = util
 })
 
 t[#t+1] = LoadActorWithParams('leaderboard.lua', {

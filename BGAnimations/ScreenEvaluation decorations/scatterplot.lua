@@ -1,5 +1,6 @@
 local sizes = Var('sizes')
 local stageStats = Var('stageStats')
+local util = Var('util')
 
 local t = Def.ActorFrame{
 	InitCommand = function(self)
@@ -13,7 +14,6 @@ local t = Def.ActorFrame{
 		end
 	},
 }
-
 
 t[#t+1] = LoadActorWithParams("../_offsetplot.lua", {sizing = {Width = sizes.scatterplotContainer.w, Height = sizes.scatterplotContainer.h - sizes.vPadding*4}, extraFeatures = true, textsize = FONTSIZE.header}) .. {
 	Name = 'offsetPlot',

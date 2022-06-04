@@ -4,7 +4,7 @@ local profile = GetPlayerOrMachineProfile(PLAYER_1)
 -- this table has a bunch of funny ratio math so that i'm able to translate my design from affinity to etterna down to the pixel
 -- height ratio = (n / 720) * sh
 -- width ratio = (n / 1280) * sh
--- thanks poco
+
 local sizes = {
 	headerHeight = (30 / 720) * sh,
 	footerHeight = (80 / 720) * sh,

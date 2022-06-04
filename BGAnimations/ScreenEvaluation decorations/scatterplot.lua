@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
-			self:zoomto(sizes.scatterplotContainer.w + sizes.border, sizes.scatterplotContainer.h + sizes.border)
+			self:setsize(sizes.scatterplotContainer.w + sizes.border, sizes.scatterplotContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 		end
 	},

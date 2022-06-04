@@ -180,14 +180,14 @@ util.makeJudgments = function()
 			Def.Quad {
 				Name = 'barBg',
 				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
+					self:setsize(sizes.judgment.barLength, sizes.judgment.barGirth)
 					self:diffuse(0.3,0.3,0.3,1)
 				end
 			},
 			Def.Quad {
 				Name = 'barFill',
 				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
+					self:setsize(sizes.judgment.barLength, sizes.judgment.barGirth)
 					self:diffuse(colorByJudgment(judges[i]))
 					self:cropright(1)
 					self:sleep(0.2)
@@ -234,13 +234,13 @@ util.makeJudgments = function()
 						self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
 						self:diffuse(0.5,0.5,0.5,1)
 						self:halign(1)
-						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetZoomedWidth() - sizes.hPadding/4)
+						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
 					end,
 					SelectedEvalScoreMessageCommand = function(self, curScore)
 						if curScore.score then
 							local jud = curScore.judgments[i]
 							self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
-							self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetZoomedWidth() - sizes.hPadding/4)
+							self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
 						end
 					end
 				},
@@ -270,14 +270,14 @@ util.makeExtraJudgments = function()
 			Def.Quad {
 				Name = 'barBg',
 				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
+					self:setsize(sizes.judgment.barLength, sizes.judgment.barGirth)
 					self:diffuse(0.3,0.3,0.3,1)
 				end
 			},
 			Def.Quad {
 				Name = 'barFill',
 				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, sizes.judgment.barGirth)
+					self:setsize(sizes.judgment.barLength, sizes.judgment.barGirth)
 					self:cropright(1)
 					self:sleep(0.2)
 					self:smooth(0.4)
@@ -330,7 +330,7 @@ util.makeRatios = function()
 			end,
 			Def.Quad {
 				OnCommand = function(self)
-					self:zoomto(sizes.judgment.barLength, 1):y(-sizes.vPadding*2)
+					self:setsize(sizes.judgment.barLength, 1):y(-sizes.vPadding*2)
 					self:diffuse(0.3,0.3,0.3,1)
 					self:halign(0):valign(1)
 				end
@@ -419,7 +419,7 @@ util.makeScores = function(score)
 			UIElements.QuadButton(1,1) .. {
 				Name = 'bg',
 				OnCommand = function(self)
-					self:zoomto(sizes.leaderboardScore.w, sizes.leaderboardScore.h)
+					self:setsize(sizes.leaderboardScore.w, sizes.leaderboardScore.h)
 					self:diffuse(0.15,0.15,0.15,1)
 				end,
 				MouseOverCommand = function(self)
@@ -473,7 +473,7 @@ util.makeScores = function(score)
 					local rate = allTheScores[i].rate
 					self:settext(rate)
 					self:halign(1):valign(0)
-					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetZoomedWidth() - sizes.hPadding*2, sizes.hPadding/2)
+					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetWidth() - sizes.hPadding*2, sizes.hPadding/2)
 				end
 			},
 			LoadSizedFont('small') .. {

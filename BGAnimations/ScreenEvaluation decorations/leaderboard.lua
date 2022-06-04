@@ -10,7 +10,7 @@ local t = Def.ActorFrame{
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
-			self:zoomto(sizes.leaderboardContainer.w + sizes.border, sizes.leaderboardContainer.h + sizes.border)
+			self:setsize(sizes.leaderboardContainer.w + sizes.border, sizes.leaderboardContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 			self:visible(true)
 		end

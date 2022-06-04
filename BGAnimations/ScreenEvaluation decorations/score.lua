@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
-			self:zoomto(sizes.scoreContainer.w + sizes.border, sizes.scoreContainer.h + sizes.border)
+			self:setsize(sizes.scoreContainer.w + sizes.border, sizes.scoreContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 		end
 	},
@@ -80,7 +80,7 @@ t[#t+1] = Def.ActorFrame {
 		},
 		Def.Quad {
 			OnCommand = function(self)
-				self:zoomto(1,23)
+				self:setsize(1,23)
 				self:diffuse(0.3,0.3,0.3,1)
 				self:halign(1)
 				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, -1)
@@ -103,7 +103,7 @@ t[#t+1] = Def.ActorFrame {
 		end,
 		Def.Quad {
 			OnCommand = function(self)
-				self:zoomto(sizes.scoreContainer.w - sizes.hPadding*2, 1)
+				self:setsize(sizes.scoreContainer.w - sizes.hPadding*2, 1)
 				self:diffuse(0.3,0.3,0.3,1)
 				self:halign(0.5):valign(1)
 			end
@@ -120,7 +120,7 @@ t[#t+1] = Def.ActorFrame {
 		},
 		Def.Quad {
 			OnCommand = function(self)
-				self:zoomto(sizes.scoreContainer.w - sizes.hPadding*2,1)
+				self:setsize(sizes.scoreContainer.w - sizes.hPadding*2,1)
 				self:diffuse(0.3,0.3,0.3,1)
 				self:halign(0.5):valign(1)
 				self:y( sizes.modList.vPadding )
@@ -165,7 +165,7 @@ t[#t+1] = Def.ActorFrame {
 	},
 	Def.Quad {
 		OnCommand = function(self)
-			self:zoomto(1, (280 / 720 * sh))
+			self:setsize(1, (280 / 720 * sh))
 			self:diffuse(0.3,0.3,0.3,1)
 			self:halign(0):valign(1)
 			self:y( sizes.scoreContainer.h/2 - sizes.vPadding )
@@ -186,7 +186,7 @@ t[#t+1] = Def.ActorFrame {
 			self:valign(0)
 			self:GetChild('Backing'):visible(false)
 			self:GetChild('Line'):visible(false)
-			self:zoomto(sizes.lifeGraph.w, sizes.lifeGraph.h)
+			self:setsize(sizes.lifeGraph.w, sizes.lifeGraph.h)
 			self:y(-sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*3))
 			self:halign(0)
 		end,
@@ -198,7 +198,7 @@ t[#t+1] = Def.ActorFrame {
 	},
 	Def.Quad {
 		OnCommand = function(self)
-			self:zoomto(sizes.scoreContainer.w/2 - sizes.hPadding*2, 1)
+			self:setsize(sizes.scoreContainer.w/2 - sizes.hPadding*2, 1)
 			self:diffuse(0.3,0.3,0.3,1)
 			self:halign(0):valign(1)
 			self:y( -sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*4) + sizes.lifeGraph.h )
@@ -221,7 +221,7 @@ t[#t+1] = Def.ActorFrame {
 			UIElements.QuadButton(1,1) .. {
 				Name = 'BG',
 				OnCommand = function(self)
-					self:zoomto(sizes.lifeGraph.w, sizes.lifeGraph.h):valign(0)
+					self:setsize(sizes.lifeGraph.w, sizes.lifeGraph.h):valign(0)
 					self:diffuse(0.2,0.2,0.2,1)
 				end,
 				MouseOverCommand = function(self)

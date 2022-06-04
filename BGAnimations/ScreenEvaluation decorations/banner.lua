@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
-			self:zoomto(sizes.bannerContainer.w + sizes.border, sizes.bannerContainer.h + sizes.border)
+			self:setsize(sizes.bannerContainer.w + sizes.border, sizes.bannerContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 		end
 	},
@@ -85,7 +85,7 @@ t[#t+1] = Def.ActorFrame {
 		},
 		Def.Quad {
 			OnCommand = function(self)
-				self:zoomto(1,23)
+				self:setsize(1,23)
 				self:diffuse(0.3,0.3,0.3,1)
 				self:halign(1)
 				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, 1)
@@ -106,7 +106,7 @@ t[#t+1] = Def.ActorFrame {
 				local txt = self:GetChild('rateMod')
 				local rate = getRateString(stageStats.score:GetMusicRate())
 				self:xy(
-					-txt:GetZoomedWidth()/2,
+					-txt:GetWidth()/2,
 					-sizes.bannerContainer.h + sizes.bannerSize.h
 				)
 				self:addy(3)
@@ -118,11 +118,11 @@ t[#t+1] = Def.ActorFrame {
 				Name = 'triangle',
 				OnCommand = function(self)
 					local txt = self:GetParent():GetChild('rateMod')
-					self:zoomto(50 + sizes.hPadding, (20 / 720) * 480)
+					self:setsize(50 + sizes.hPadding, (20 / 720) * 480)
 					self:diffuse(0.1,0.1,0.1,1)
 					self:skewx(-0.25)
 					self:cropleft(0.5)
-					self:x((-txt:GetZoomedWidth()/2) - 8)
+					self:x((-txt:GetWidth()/2) - 8)
 				end
 			},
 			Def.Quad {
@@ -130,7 +130,7 @@ t[#t+1] = Def.ActorFrame {
 				OnCommand = function(self)
 					local txt = self:GetParent():GetChild('rateMod')
 					self:addx((sizes.border/2) + 2)
-					self:zoomto((txt:GetZoomedWidth() + sizes.hPadding) - 4, (20 / 720) * 480)
+					self:setsize((txt:GetWidth() + sizes.hPadding) - 4, (20 / 720) * 480)
 					self:diffuse(0.1,0.1,0.1,1)
 					--self:skewx(-0.25)
 				end

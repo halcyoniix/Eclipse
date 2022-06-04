@@ -21,12 +21,19 @@ local sizes = {
 	},
 }
 
-t.OnCommand = function(self)
-	local grade = self:GetParent():GetChild('GradeP1')
-	if grade ~= nil then
-		grade:halign(0)
-		grade:xy(-(sizes.songPanel.w/2) + sizes.bannerIcon.w + 3, 6)
-		grade:zoom(1.2)
+t.SetMessageCommand = function(self, params)
+	if params.Song then
+		local hgrade = params.Song:GetHighestGrade() or 'Grade_None'
+		local grade = self:GetParent():GetChild('GradeP1')
+		if grade ~= nil then
+			grade:RunCommandsOnChildren(function(self)
+				self:xy(-(sizes.songPanel.w/2) + sizes.bannerIcon.w + 3, 5)
+				self:zoom(FONTSIZE.small)
+				self:halign(0)
+				self:maxwidth(299)
+				self:diffuse(colorByGrade(tostring(hgrade)))
+			end)
+		end
 	end
 end
 

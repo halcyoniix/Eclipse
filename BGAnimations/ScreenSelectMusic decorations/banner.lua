@@ -15,7 +15,7 @@ local t = Def.ActorFrame{
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
-			self:zoomto(sizes.bannerContainer.w + sizes.border, sizes.bannerContainer.h + sizes.border)
+			self:setsize(sizes.bannerContainer.w + sizes.border, sizes.bannerContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 		end,
 	},
@@ -137,7 +137,7 @@ t[#t+1] = Def.ActorFrame {
 		},
 		Def.Quad {
 			OnCommand = function(self)
-				self:zoomto(1,23)
+				self:setsize(1,23)
 				self:diffuse(0.3,0.3,0.3,1)
 				self:halign(1)
 				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, 1)
@@ -156,19 +156,26 @@ t[#t+1] = Def.ActorFrame {
 			end,
 			Def.Quad {
 				OnCommand = function(self)
-					self:zoomto(48, self:GetParent():GetChild('rateMod'):GetZoomedHeight()*2)
+					self:setsize(48, self:GetParent():GetChild('rateMod'):GetHeight()*2)
 					self:diffuse(0.1,0.1,0.1,1)
 					self:x((sizes.hPadding/2)+1)
 				end,
 			},
 			Def.Quad {
 				OnCommand = function(self)
-					self:zoomto(self:GetParent():GetChild('rateMod'):GetZoomedHeight()*2, self:GetParent():GetChild('rateMod'):GetZoomedHeight()*2)
+					self:setsize(self:GetParent():GetChild('rateMod'):GetHeight()*2, self:GetParent():GetChild('rateMod'):GetHeight()*2)
 					self:diffuse(0.1,0.1,0.1,1)
 					self:halign(0)
 					self:x(-50)
 					self:skewx(-1)
 				end,
+				ModifyCommand = function(self, params)
+					if params.song then
+						for k,v in pairs(params.song:GetAllSteps()) do
+							ms.ok(v:GetDifficulty() .. ' | ' .. v:GetMeter())
+						end
+					end
+				end
 			},
 			UIElements.TextToolTip (1, 1, 'Common Normal') .. {
 				Name = 'rateMod',

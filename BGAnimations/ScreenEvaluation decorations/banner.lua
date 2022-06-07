@@ -28,15 +28,10 @@ t[#t+1] = Def.ActorFrame {
 			self:finishtweening()
 			if stageStats.song then
 				local bnpath = stageStats.song:GetBannerPath()
-				if not bnpath then
+				if not bnpath or bnpath == '' then
 					bnpath = THEME:GetPathG("Common", "fallback banner")
-					self:visible(false)
-				else
-					self:visible(true)
 				end
-				self:LoadBackground(bnpath)
-			else
-				self:visible(false)
+				self:Load(bnpath)
 			end
 		end,
 	},
@@ -45,7 +40,6 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand = function(self)
 			self:RunCommandsOnChildren(function(self)
 				self:halign(0):valign(1)
-				self:maxwidth(sizes.bannerContainer.w*1.4)
 			end)
 		end,
 		LoadSizedFont ('medium') .. {
@@ -53,6 +47,7 @@ t[#t+1] = Def.ActorFrame {
 			InitCommand = function(self)
 				self:settext(GAMESTATE:GetCurrentSong():GetDisplayMainTitle())
 				self:xy( -(sizes.bannerContainer.w/2) + sizes.hPadding/2, (sizes.bannerContainer.h/2) - sizes.vPadding*2 )
+				self:maxwidth(sizes.bannerContainer.w+150)
 			end
 		},
 		LoadSizedFont ('header') .. {
@@ -60,6 +55,7 @@ t[#t+1] = Def.ActorFrame {
 			InitCommand = function(self)
 				self:settext(GAMESTATE:GetCurrentSong():GetDisplayArtist())
 				self:xy( -(sizes.bannerContainer.w/2) + sizes.hPadding/2, (sizes.bannerContainer.h/2) - sizes.vPadding/2 )
+				self:maxwidth(sizes.bannerContainer.w+60)
 			end
 		},
 	},
@@ -69,7 +65,6 @@ t[#t+1] = Def.ActorFrame {
 			self:xy( (sizes.bannerContainer.w/2) - sizes.hPadding/2, sizes.bannerContainer.h/2 - sizes.vPadding + 1 )
 			self:RunCommandsOnChildren(function(self)
 				self:halign(1):valign(1)
-				--self:maxwidth(sizes.bannerContainer.w)
 			end)
 		end,
 		LoadSizedFont ('large') .. {

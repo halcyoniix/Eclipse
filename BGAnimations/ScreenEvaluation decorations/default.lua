@@ -351,7 +351,7 @@ util.makeRatios = function()
 				LoadSizedFont('small') .. {
 					Name = 'judgmentCount',
 					OnCommand = function(self)
-						self:settextf('%.1f:1',fuck[i] or '??')
+						self:settextf('%s:1',tostring(fuck[i]) == 'inf' and '∞' or string.format('%.1f',fuck[i]))
 						self:halign(1)
 						self:x(sizes.judgment.barLength)
 					end,
@@ -359,7 +359,7 @@ util.makeRatios = function()
 						if curScore.score then
 							local accData = util.calcAccData(curScore.score)
 							local fuck = {accData.ma, accData.pa}
-							self:settextf('%.1f:1', fuck[i] or '??')
+							self:settextf('%s:1',tostring(fuck[i]) == 'inf' and '∞' or string.format('%.1f',fuck[i]))
 						end
 					end
 				},
@@ -374,9 +374,10 @@ util.makeRatios = function()
 	return f
 end
 
-local allTheScores = {}
+util.allTheScores = {}
 local pageLimit = 6
-local curPage = 1
+util.curPage = 1
+util.fuckyou = 0
 local currentSelectedScore
 local curRate = string.format('%.1fx',stageStats.score:GetMusicRate()) -- haha
 for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
@@ -388,7 +389,7 @@ for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
 				for i = 1,#judges do
 					a[i] = curScore:GetTapNoteScore(judges[i])
 				end
-				table.insert(allTheScores, {
+				table.insert(util.allTheScores, {
 					score = curScore,
 					judgments = a,
 					percent = percentage,
@@ -414,7 +415,7 @@ util.makeScores = function(score)
 				self:playcommand('CheckPage', {page = p})
 			end,
 			CheckPageCommand = function(self, params)
-				self:visible(params.page == curPage)
+				self:visible(params.page == util.curPage)
 			end,
 			UIElements.QuadButton(1,1) .. {
 				Name = 'bg',
@@ -432,27 +433,36 @@ util.makeScores = function(score)
 				end,
 				MouseDownCommand = function(self)
 					if currentSelectedScore ~= i then
-						MESSAGEMAN:Broadcast('SelectedEvalScore', allTheScores[i])
+						MESSAGEMAN:Broadcast('SelectedEvalScore', util.allTheScores[i])
 					end
 					currentSelectedScore = i
 				end
 			},
-			LoadSizedFont('header') .. {
+			UIElements.TextToolTip(1, 1, 'Common Normal') .. {
 				Name = 'percentage',
 				OnCommand = function(self)
-					local p = allTheScores[i].percent
-					local grade = allTheScores[i].grade
-					self:settextf(p > 99.65 and '%s %5.4f%%' or '%s %5.2f%%',grade, p)
+					local p = util.allTheScores[i].percent
+					local grade = util.allTheScores[i].grade
+					self:zoom(FONTSIZE.header)
+					self:settextf('%s %5.2f%%',grade, p)
 					self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
 					self:halign(1):valign(0)
 					self:xy(sizes.leaderboardScore.w/2 - sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
+				end,
+				MouseOverCommand = function(self)
+					local p = util.allTheScores[i].percent
+					TOOLTIP:SetText(string.format('%5.5f%%', p))
+					TOOLTIP:Show()
+				end,
+				MouseOutCommand = function(self)
+					TOOLTIP:Hide()
 				end
 			},
 			LoadSizedFont('header') .. {
 				Name = 'judgments',
 				OnCommand = function(self)
 					local txt = string.format(
-					'%s - %s - %s - %s - %s - %s', unpack(allTheScores[i].judgments))
+					'%s - %s - %s - %s - %s - %s', unpack(util.allTheScores[i].judgments))
 					self:settext(txt)
 					self:halign(0):valign(0)
 					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
@@ -461,7 +471,7 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'ssr',
 				OnCommand = function(self)
-					local ssr = allTheScores[i].ssr
+					local ssr = util.allTheScores[i].ssr
 					self:settext(ssr):diffuse(colorByMSD(ssr))
 					self:halign(1):valign(0)
 					self:xy(sizes.leaderboardScore.w/2 - sizes.hPadding, sizes.hPadding/2)
@@ -470,16 +480,16 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'rate',
 				OnCommand = function(self)
-					local rate = allTheScores[i].rate
+					local rate = util.allTheScores[i].rate
 					self:settext(rate)
 					self:halign(1):valign(0)
-					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetWidth() - sizes.hPadding*2, sizes.hPadding/2)
+					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetZoomedWidth() - sizes.hPadding*2, sizes.hPadding/2)
 				end
 			},
 			LoadSizedFont('small') .. {
 				Name = 'date',
 				OnCommand = function(self)
-					local date = allTheScores[i].date
+					local date = util.allTheScores[i].date
 					self:settext(date):diffuse(0.5,0.5,0.5,1)
 					self:halign(0):valign(0)
 					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, sizes.hPadding/2)
@@ -490,11 +500,11 @@ util.makeScores = function(score)
 
 	local f = Def.ActorFrame{
 		OnCommand = function(self)
-			MESSAGEMAN:Broadcast('UpdateLeaderboardScorePage', {page = curPage})
+			MESSAGEMAN:Broadcast('UpdateLeaderboardScorePage', {page = util.curPage})
 		end
 	}
 
-	for i = 1,#allTheScores do
+	for i = 1,#util.allTheScores do
 		local page = math.floor((i-1)/pageLimit) + 1
 		if not f[page] then f[page] = Def.ActorFrame{} end
 		f[page][#f[page]+1] = s(i, page)

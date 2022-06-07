@@ -80,7 +80,6 @@ t[#t+1] = Def.Sprite {
 		local song = params.Song
 		local focus = params.HasFocus
 		local bnpath
-
 		if song then 
 			bnpath = params.Song:GetBannerPath()
 			if bnpath == nil then 

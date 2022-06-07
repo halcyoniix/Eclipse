@@ -7,12 +7,6 @@ local t = Def.ActorFrame{
 	InitCommand = function(self)
 		self:xy(sizes.scoreContainer.x, sizes.scoreContainer.y)
 	end,
-	CurrentSongChangedMessageCommand = function(self)
-		self:playcommand('Modify', {
-			song = GAMESTATE:GetCurrentSong(),
-			steps = GAMESTATE:GetCurrentSteps(),
-		})
-	end,
 	Def.Quad {
 		Name = 'bg',
 		InitCommand = function(self)
@@ -22,7 +16,17 @@ local t = Def.ActorFrame{
 	},
 }
 
-
+local thingy = function(event)
+	local num = tonumber(event.char)
+	if type(num) == 'number' then
+		if event.type == 'InputEventType_FirstPress' then
+			if num >= 1 and num <= #util.tab.buttons then
+				util.tab.curSelected = util.tab.buttons[num][1]
+				MESSAGEMAN:Broadcast('TabSelected', {name = util.tab.buttons[num][1], index = num})
+			end
+		end
+	end
+end
 
 
 t[#t+1] = Def.ActorFrame {
@@ -36,15 +40,15 @@ t[#t+1] = Def.ActorFrame {
 			)
 			self:diffusealpha(0.3)
 		end,
-		TabSelectedMessageCommand = function(self, params)
-			ms.ok(params)
+		BeginCommand = function(self)
+			SCREENMAN:GetTopScreen():AddInputCallback(thingy)
 		end
 	},
 	util.makeTabs() .. {
 		InitCommand = function(self)
 			self:xy(
 					-sizes.scoreContainer.w/2,
-					sizes.scoreContainer.h/2 - sizes.tab.h/2 - sizes.hPadding
+					sizes.tab.vPadding
 				)
 		end
 	}

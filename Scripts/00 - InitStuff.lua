@@ -40,6 +40,20 @@ FUCKMETRICS.SubtitleOnCommand = function(self)
 	self:diffuse(0.6,0.6,0.6,1)
 end
 
+FUCKMETRICS.SectionCollapsedOnCommand = function(self)
+	self:stopeffect()
+	self:halign(0)
+	self:x(-60)
+	self:zoom(FONTSIZE.header):maxwidth(400)
+end
+
+FUCKMETRICS.SectionExpandedOnCommand = function(self)
+	self:stopeffect()
+	self:halign(0)
+	self:x(-60)
+	self:zoom(FONTSIZE.header):maxwidth(400)
+end
+
 LoadSizedFont = function(s)
 	local s = tostring(s)
 	if s then

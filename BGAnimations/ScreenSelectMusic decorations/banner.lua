@@ -71,9 +71,9 @@ t[#t+1] = Def.ActorFrame {
 				bnpath = params.song:GetBannerPath()
 			else
 				bnpath = SONGMAN:GetSongGroupBannerPath(SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection())
-				if not bnpath or bnpath == '' then
-					bnpath = THEME:GetPathG('Common', 'fallback banner')
-				end
+			end
+			if not bnpath or bnpath == '' then
+				bnpath = THEME:GetPathG('Common', 'fallback banner')
 			end
 			self:Load(bnpath)
 			self:diffusealpha(1)

@@ -73,11 +73,15 @@ local sizes = {
 		h = (50 / 720) * scale16x9.sh,
 	},
 
+
+
 	tab = {
 		w = 40,
-		h = 14
+		h = 14,
 	}
 }
+
+sizes.tab.vPadding = sizes.scoreContainer.h/2 - sizes.tab.h/2 - sizes.hPadding
 
 local util = {
 	tab = {}
@@ -87,7 +91,7 @@ util.tab.buttons = {
 	{'Scores'},
 	{'Goals'},
 	{'Search'},
-	{'Profile'},
+	{'Playlists'},
 	{'Tags'},
 }
 util.tab.curSelected = util.tab.buttons[1][1]
@@ -95,7 +99,7 @@ util.tab.curSelected = util.tab.buttons[1][1]
 util.makeTabs = function()
 	local f = Def.ActorFrame{
 		OnCommand = function(self) self:playcommand('Check') end,
-		CheckCommand = function(self)
+		TabSelectedMessageCommand = function(self, params)
 			for k,v in pairs(self:GetChildren()) do
 				if v:GetName() == util.tab.curSelected then
 					v:playcommand('GainFocus')
@@ -112,10 +116,13 @@ util.makeTabs = function()
 				local txt,bg = self:GetChild('Text'), self:GetChild('BG')
 				bg:setsize(sizes.tab.w, sizes.tab.h)
 				txt:settext(self:GetName())
-				txt:maxwidth(sizes.tab.w*2)
+				txt:maxwidth((sizes.tab.w*2)+50)
 				txt:zoom(FONTSIZE.small)
 				local s = #util.tab.buttons-1 -- fuck you lua
 				self:x( (sizes.tab.w/2) + (sizes.hPadding) + ((sizes.scoreContainer.w - sizes.tab.w - sizes.hPadding*2) / s) * (i-1) )
+			end,
+			OnCommand = function(self)
+				MESSAGEMAN:Broadcast('TabSelected', {name = util.tab.curSelected, index = 1})
 			end,
 			GainFocusCommand = function(self)
 				local txt,bg = self:GetChild('Text'), self:GetChild('BG')
@@ -138,7 +145,6 @@ util.makeTabs = function()
 				if params.update == 'OnMouseDown' then
 					util.tab.curSelected = self:GetName()
 					MESSAGEMAN:Broadcast('TabSelected', {name = self:GetName(), index = i})
-					self:GetParent():playcommand('Check')
 				end
 			end
 		}
@@ -149,17 +155,54 @@ util.makeTabs = function()
 	return f
 end
 
-
-t[#t+1] = LoadActorWithParams('banner.lua', {
-	sizes = sizes,
-	stageStats = stageStats,
-})
-
 t[#t+1] = LoadActorWithParams('main.lua', {
 	sizes = sizes,
 	stageStats = stageStats,
 	util = util
 })
+
+t[#t+1] = LoadActorWithParams('banner.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_general.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_scores.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_goals.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_search.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_playlists.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
+t[#t+1] = LoadActorWithParams('tab_tags.lua', {
+	sizes = sizes,
+	stageStats = stageStats,
+	util = util
+})
+
 
 
 

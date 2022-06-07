@@ -3,6 +3,7 @@ local t = Def.ActorFrame {}
 t[#t+1] = LoadActor('_playerFrame/default.lua')
 t[#t+1] = LoadActor('_mouse.lua')
 
+local key = 'X8ca18c993d793f4bc2bb63a40139170a901504bc'
 t[#t+1] = Def.ActorFrame{
 	OnCommand = function(self)
 		self:xy(scx,sh-20)
@@ -27,9 +28,20 @@ t[#t+1] = Def.ActorFrame{
 			self:linear(0.02)
 			self:diffuse(0.7,0.7,0.7,1)
 		end,
+		CurrentSongChangedMessageCommand = function(self, params)
+			--ms.ok(params.ptr)
+			if params.ptr then
+				self:playcommand('Modify', {
+					song = params.ptr,
+					steps = params.ptr:GetAllSteps(),
+				})
+			end
+		end,
+		ModifyCommand = function(self, params)
+			key = params.steps[1]:GetChartKey()
+		end,
 		ClickCommand = function(self, params)
 			if params.update == 'OnMouseDown' then
-				local key = 'X8ca18c993d793f4bc2bb63a40139170a901504bc'
 				local score = SCOREMAN:GetScoresByKey(key)
 
 				for k,v in pairs(score['1.0x']:GetScores()) do

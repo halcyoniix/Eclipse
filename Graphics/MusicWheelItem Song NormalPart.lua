@@ -53,7 +53,7 @@ t[#t+1] = Def.ActorFrame{
 				self:diffuseramp()
 				self:effectclock('bgm')
 				self:effectcolor1(1,1,1,0)
-				self:effectcolor2(1,1,1,0.2)
+				self:effectcolor2(1,1,1,0.25)
 			else
 				self:stopeffect()
 			end
@@ -73,8 +73,8 @@ t[#t+1] = Def.Quad {
 t[#t+1] = Def.Sprite {
 	Name = 'bannerIcon',
 	InitCommand = function(self)
-		self:halign(0)
-		self:x(-(sizes.songPanel.w/2) + sizes.border - 1.5)
+		--self:halign(0)
+		self:x((sizes.bannerIcon.w/2)-(sizes.songPanel.w/2) + sizes.border - 3)
 	end,
 	SetMessageCommand = function(self,params)
 		local song = params.Song
@@ -86,8 +86,10 @@ t[#t+1] = Def.Sprite {
 			if bnpath == nil then 
 				bnpath = THEME:GetPathG("Common", "fallback banner")
 		end
+		local sx, sy = sizes.bannerIcon.w - sizes.border, sizes.bannerIcon.h - sizes.border
 		self:Load(bnpath)
 		self:setsize(sizes.bannerIcon.w - sizes.border, sizes.bannerIcon.h - sizes.border)
+		--self:scaletocover(-sx/2, -sy/2, sx/2, sy/2) -- ???
 		end
 	end
 }

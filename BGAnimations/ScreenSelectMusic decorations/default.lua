@@ -68,13 +68,86 @@ local sizes = {
 		h = (100 / 720) * scale16x9.sh
 	},
 
-
 	leaderboardScore = {
 		w = (440 / 1280) * scale16x9.sw,
 		h = (50 / 720) * scale16x9.sh,
+	},
+
+	tab = {
+		w = 40,
+		h = 14
 	}
 }
 
+local util = {
+	tab = {}
+}
+util.tab.buttons = {
+	{'General'},
+	{'Scores'},
+	{'Goals'},
+	{'Search'},
+	{'Profile'},
+	{'Tags'},
+}
+util.tab.curSelected = util.tab.buttons[1][1]
+
+util.makeTabs = function()
+	local f = Def.ActorFrame{
+		OnCommand = function(self) self:playcommand('Check') end,
+		CheckCommand = function(self)
+			for k,v in pairs(self:GetChildren()) do
+				if v:GetName() == util.tab.curSelected then
+					v:playcommand('GainFocus')
+				else
+					v:playcommand('LoseFocus')
+				end
+			end
+		end
+	}
+	local tab = function(i)
+		return UIElements.TextButton(1, 1, 'Common Normal') .. {
+			Name = util.tab.buttons[i][1],
+			InitCommand = function(self)
+				local txt,bg = self:GetChild('Text'), self:GetChild('BG')
+				bg:setsize(sizes.tab.w, sizes.tab.h)
+				txt:settext(self:GetName())
+				txt:maxwidth(sizes.tab.w*2)
+				txt:zoom(FONTSIZE.small)
+				local s = #util.tab.buttons-1 -- fuck you lua
+				self:x( (sizes.tab.w/2) + (sizes.hPadding) + ((sizes.scoreContainer.w - sizes.tab.w - sizes.hPadding*2) / s) * (i-1) )
+			end,
+			GainFocusCommand = function(self)
+				local txt,bg = self:GetChild('Text'), self:GetChild('BG')
+				txt:finishtweening():smooth(0.1):diffusealpha(1)
+			end,
+			LoseFocusCommand = function(self)
+				local txt,bg = self:GetChild('Text'), self:GetChild('BG')
+				txt:finishtweening():smooth(0.1):diffusealpha(0.6)
+			end,
+			RolloverUpdateCommand = function(self, params)
+				if params.update == 'in' then
+					self:playcommand('GainFocus')
+				elseif params.update == 'out' then
+					if util.tab.curSelected ~= util.tab.buttons[i][1] then
+						self:playcommand('LoseFocus')
+					end
+				end
+			end,
+			ClickCommand = function(self, params)
+				if params.update == 'OnMouseDown' then
+					util.tab.curSelected = self:GetName()
+					MESSAGEMAN:Broadcast('TabSelected', {name = self:GetName(), index = i})
+					self:GetParent():playcommand('Check')
+				end
+			end
+		}
+	end
+	for i = 1,#util.tab.buttons do
+		f[#f+1] = tab(i)
+	end
+	return f
+end
 
 
 t[#t+1] = LoadActorWithParams('banner.lua', {
@@ -85,6 +158,7 @@ t[#t+1] = LoadActorWithParams('banner.lua', {
 t[#t+1] = LoadActorWithParams('main.lua', {
 	sizes = sizes,
 	stageStats = stageStats,
+	util = util
 })
 
 

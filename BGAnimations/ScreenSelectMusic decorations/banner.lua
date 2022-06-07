@@ -18,6 +18,13 @@ local t = Def.ActorFrame{
 			self:setsize(sizes.bannerContainer.w + sizes.border, sizes.bannerContainer.h + sizes.border)
 			self:diffuse(0.1,0.1,0.1,1)
 		end,
+		ModifyCommand = function(self, params)
+			if params.song then
+				for k,v in pairs(params.song:GetAllSteps()) do
+					--ms.ok(v:GetDifficulty() .. ' | ' .. v:GetMeter())
+				end
+			end
+		end
 	},
 }
 
@@ -87,7 +94,6 @@ t[#t+1] = Def.ActorFrame {
 				self:maxwidth(120):zoom(FONTSIZE.large)
 			end,
 			UpdateTooltipCommand = function(self, params)
-				-- stay away from ternary, kids
 				local txt = ''
 				local msd = {}
 				if params.steps then
@@ -156,26 +162,19 @@ t[#t+1] = Def.ActorFrame {
 			end,
 			Def.Quad {
 				OnCommand = function(self)
-					self:setsize(48, self:GetParent():GetChild('rateMod'):GetHeight()*2)
+					self:setsize(46, self:GetParent():GetChild('rateMod'):GetHeight())
 					self:diffuse(0.1,0.1,0.1,1)
 					self:x((sizes.hPadding/2)+1)
 				end,
 			},
 			Def.Quad {
 				OnCommand = function(self)
-					self:setsize(self:GetParent():GetChild('rateMod'):GetHeight()*2, self:GetParent():GetChild('rateMod'):GetHeight()*2)
+					self:setsize(self:GetParent():GetChild('rateMod'):GetHeight(), self:GetParent():GetChild('rateMod'):GetHeight())
 					self:diffuse(0.1,0.1,0.1,1)
 					self:halign(0)
 					self:x(-50)
 					self:skewx(-1)
 				end,
-				ModifyCommand = function(self, params)
-					if params.song then
-						for k,v in pairs(params.song:GetAllSteps()) do
-							ms.ok(v:GetDifficulty() .. ' | ' .. v:GetMeter())
-						end
-					end
-				end
 			},
 			UIElements.TextToolTip (1, 1, 'Common Normal') .. {
 				Name = 'rateMod',

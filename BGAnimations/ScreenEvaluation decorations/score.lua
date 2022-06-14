@@ -222,7 +222,7 @@ t[#t+1] = Def.ActorFrame {
 				Name = 'BG',
 				OnCommand = function(self)
 					self:setsize(sizes.lifeGraph.w, sizes.lifeGraph.h):valign(0)
-					self:diffuse(0.2,0.2,0.2,1)
+					self:diffuse(1,1,1,0.1)
 				end,
 				MouseOverCommand = function(self)
 					local s, cb = util.calcStatData(stageStats.score, 4)

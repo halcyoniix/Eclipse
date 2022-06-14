@@ -55,7 +55,7 @@ t[#t+1] = Def.ActorFrame {
 			InitCommand = function(self)
 				self:settext(GAMESTATE:GetCurrentSong():GetDisplayArtist())
 				self:xy( -(sizes.bannerContainer.w/2) + sizes.hPadding/2, (sizes.bannerContainer.h/2) - sizes.vPadding/2 )
-				self:maxwidth(sizes.bannerContainer.w+60)
+				self:maxwidth(sizes.bannerContainer.w+40)
 			end
 		},
 	},

@@ -1,5 +1,5 @@
 support all aspect ratios (everything is *accessible*, not necessarily pretty :D)
 come up with a better way to handle selecting scores in eval
-write a tab system for select music
 try to add a 48px jp font or hack the font size in eval
 write a base assets menu
+make sub-tables for eval leaderboard scores based on rate

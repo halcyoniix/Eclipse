@@ -375,34 +375,37 @@ util.makeRatios = function()
 end
 
 util.allTheScores = {}
-local pageLimit = 6
 util.curPage = 1
-util.fuckyou = 0
-local currentSelectedScore
-local curRate = string.format('%.1fx',stageStats.score:GetMusicRate()) -- haha
+local pageLimit = 6
+local currentScoreIndex
+util.curRate = string.format('%.1fx',stageStats.score:GetMusicRate())
 for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
-	if rate == curRate then
-		for _, curScore in pairs(scoreTable) do
-			local percentage = curScore:GetWifeScore() * 100
-			if percentage ~= 0 then
-				local a = {0,0,0,0,0,0}
-				for i = 1,#judges do
-					a[i] = curScore:GetTapNoteScore(judges[i])
-				end
-				table.insert(util.allTheScores, {
-					score = curScore,
-					judgments = a,
-					percent = percentage,
-					grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
-					date = curScore:GetDate(),
-					ssr = string.format('%5.2f',curScore:GetSkillsetSSR('Overall')),
-					rate = rate
-				})
+	if not util.allTheScores[rate] then
+		util.allTheScores[rate] = {}
+	end
+	for _, curScore in pairs(scoreTable) do
+		local percentage = curScore:GetWifeScore() * 100
+		if percentage ~= 0 then
+			local a = {0,0,0,0,0,0}
+			for i = 1,#judges do
+				a[i] = curScore:GetTapNoteScore(judges[i])
 			end
+			table.insert(util.allTheScores[rate], {
+				score = curScore,
+				judgments = a,
+				percent = percentage,
+				grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
+				date = curScore:GetDate(),
+				ssr = string.format('%5.2f',curScore:GetSkillsetSSR('Overall')),
+				rate = rate
+			})
 		end
 	end
 end
 
+table.sort(util.allTheScores, function(a, b) 
+	return a.ssr > b.ssr
+end)
 
 util.makeScores = function(score)
 
@@ -432,17 +435,34 @@ util.makeScores = function(score)
 					self:GetParent():finishtweening():smooth(0.1):zoom(1)
 				end,
 				MouseDownCommand = function(self)
-					if currentSelectedScore ~= i then
-						MESSAGEMAN:Broadcast('SelectedEvalScore', util.allTheScores[i])
+					if currentScoreIndex ~= i then
+						currentScoreIndex = i
+						MESSAGEMAN:Broadcast('SelectedEvalScore', util.allTheScores[util.curRate][i])
 					end
-					currentSelectedScore = i
+				end
+			},
+			Def.Quad {
+				Name = 'selector',
+				OnCommand = function(self)
+					self:setsize(sizes.leaderboardScore.w, sizes.leaderboardScore.h)
+					self:diffuse(0.25,0.25,0.25,0)
+					--self:xy(-sizes.leaderboardScore.w/2, -sizes.leaderboardScore.h/2)
+					--self:visible(util.allTheScores[util.curRate][i].score == score)
+				end,
+				SelectedEvalScoreMessageCommand = function(self)
+					if currentScoreIndex == i then
+						self:smooth(0.1):diffusealpha(1)
+					else
+						self:smooth(0.1):diffusealpha(0)
+					end
+					--self:visible(currentScoreIndex == i)
 				end
 			},
 			UIElements.TextToolTip(1, 1, 'Common Normal') .. {
 				Name = 'percentage',
 				OnCommand = function(self)
-					local p = util.allTheScores[i].percent
-					local grade = util.allTheScores[i].grade
+					local p = util.allTheScores[util.curRate][i].percent
+					local grade = util.allTheScores[util.curRate][i].grade
 					self:zoom(FONTSIZE.header)
 					self:settextf('%s %5.2f%%',grade, p)
 					self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
@@ -450,7 +470,7 @@ util.makeScores = function(score)
 					self:xy(sizes.leaderboardScore.w/2 - sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
 				end,
 				MouseOverCommand = function(self)
-					local p = util.allTheScores[i].percent
+					local p = util.allTheScores[util.curRate][i].percent
 					TOOLTIP:SetText(string.format('%5.5f%%', p))
 					TOOLTIP:Show()
 				end,
@@ -462,7 +482,7 @@ util.makeScores = function(score)
 				Name = 'judgments',
 				OnCommand = function(self)
 					local txt = string.format(
-					'%s - %s - %s - %s - %s - %s', unpack(util.allTheScores[i].judgments))
+					'%s - %s - %s - %s - %s - %s', unpack(util.allTheScores[util.curRate][i].judgments))
 					self:settext(txt)
 					self:halign(0):valign(0)
 					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, -sizes.leaderboardScore.h/2 + sizes.vPadding)
@@ -471,7 +491,7 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'ssr',
 				OnCommand = function(self)
-					local ssr = util.allTheScores[i].ssr
+					local ssr = util.allTheScores[util.curRate][i].ssr
 					self:settext(ssr):diffuse(colorByMSD(ssr))
 					self:halign(1):valign(0)
 					self:xy(sizes.leaderboardScore.w/2 - sizes.hPadding, sizes.hPadding/2)
@@ -480,7 +500,7 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'rate',
 				OnCommand = function(self)
-					local rate = util.allTheScores[i].rate
+					local rate = util.allTheScores[util.curRate][i].rate
 					self:settext(rate)
 					self:halign(1):valign(0)
 					self:xy(sizes.leaderboardScore.w/2 - self:GetParent():GetChild('ssr'):GetZoomedWidth() - sizes.hPadding*2, sizes.hPadding/2)
@@ -489,7 +509,7 @@ util.makeScores = function(score)
 			LoadSizedFont('small') .. {
 				Name = 'date',
 				OnCommand = function(self)
-					local date = util.allTheScores[i].date
+					local date = util.allTheScores[util.curRate][i].date
 					self:settext(date):diffuse(0.5,0.5,0.5,1)
 					self:halign(0):valign(0)
 					self:xy(-sizes.leaderboardScore.w/2 + sizes.hPadding, sizes.hPadding/2)
@@ -504,7 +524,7 @@ util.makeScores = function(score)
 		end
 	}
 
-	for i = 1,#util.allTheScores do
+	for i = 1,#util.allTheScores[util.curRate] do
 		local page = math.floor((i-1)/pageLimit) + 1
 		if not f[page] then f[page] = Def.ActorFrame{} end
 		f[page][#f[page]+1] = s(i, page)

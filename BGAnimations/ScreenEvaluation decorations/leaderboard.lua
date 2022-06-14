@@ -18,8 +18,6 @@ local t = Def.ActorFrame{
 }
 
 
-
-
 t[#t+1] = Def.ActorFrame {
 	Name = 'scoreFrame',
 	InitCommand = function(self)
@@ -29,8 +27,9 @@ t[#t+1] = Def.ActorFrame {
 	LoadSizedFont('header') .. {
 		Name = 'pageCount',
 		OnCommand = function(self)
-			self:settext('Page '.. util.curPage ..' of '.. #util.allTheScores)
-			self:valign(1)
+			self:settext('Page '.. util.curPage ..' of '.. 0)
+			self:valign(1):halign(0)
+			self:x((-sizes.leaderboardContainer.w/2) + sizes.hPadding)
 			self:y(sizes.leaderboardContainer.h - (sizes.leaderboardScore.h / 2) - sizes.vPadding)
 		end,
 		UpdateLeaderboardScorePageMessageCommand = function(self, params)

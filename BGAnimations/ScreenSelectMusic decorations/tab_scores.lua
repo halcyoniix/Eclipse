@@ -3,7 +3,7 @@ local stageStats = Var('stageStats')
 local util = Var('util')
 
 
-local t = Def.ActorFrame{
+local t = Def.ActorFrame {
 	Name = 'Scores',
 	InitCommand = function(self)
 		self:xy(sizes.scoreContainer.x, sizes.scoreContainer.y)
@@ -21,12 +21,6 @@ local t = Def.ActorFrame{
 	HideCommand = function(self, params)
 		self:finishtweening():smooth(0.2):diffusealpha(0)
 	end,
-}
-
-t[#t+1] = LoadSizedFont('large') .. {
-	OnCommand = function(self)
-		self:settext('Scores Tab')
-	end
 }
 
 

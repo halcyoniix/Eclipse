@@ -19,7 +19,7 @@ local t = Def.ActorFrame{
 
 
 t[#t+1] = Def.ActorFrame {
-	Name = 'scoreFrame',
+	Name = 'scoreFrame',	
 	InitCommand = function(self)
 		self:y((-sizes.leaderboardContainer.h/2) + sizes.leaderboardScore.h / 2)
 	end,

@@ -38,11 +38,12 @@ t[#t+1] = Def.ActorFrame {
 	LoadSizedFont('header') .. {
 		Name = 'currentTime',
 		InitCommand = function(self)
-			self:halign(0)
-			self:xy(-scx + sizes.hPadding, sizes.headerHeight/2)
+			self:halign(1)
+
+			self:xy(scx - sizes.hPadding, sizes.headerHeight/2)
 		end
 	},
-	LoadSizedFont('header') .. {
+	--[[LoadSizedFont('header') .. {
 		Name = 'currentScreen',
 		OnCommand = function(self)
 			local name = SCREENMAN:GetTopScreen():GetName()
@@ -58,6 +59,14 @@ t[#t+1] = Def.ActorFrame {
 			else
 				self:settextf('%s' .. ((name == 'ScreenEvaluationNormal' or name == 'ScreenSelectMusic') and ': %s' or ''), THEME:GetString(name, 'HeaderText'), GAMESTATE:GetCurrentSong():GetGroupName())
 			end
+		end
+	},--]]
+	util.drawIcons () .. {
+		OnCommand = function(self)
+			self:xy(-scx + sizes.hPadding, sizes.headerHeight/2)
+			self:RunCommandsOnChildren(function(self)
+				self:halign(0):setsize(sizes.iconSize, sizes.iconSize)
+			end)
 		end
 	},
 }
@@ -106,7 +115,7 @@ t[#t+1] = Def.ActorFrame {
 					self:finishtweening()
 					self:smooth(0.1)
 					self:diffuse(1,1,1,1)
-					--OOLTIP:Hide()
+					--TOOLTIP:Hide()
 				end
 			end,
 			MouseDownCommand = function(self, params)

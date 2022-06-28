@@ -8,6 +8,7 @@ local sizes = {
 	avatarSize = (80 / 720) * sh,
 	hPadding = (10 / 1280) * sw,
 	vPadding = (10 / 720) * sh,
+	iconSize = 12,
 }
 pStats.profile = GetPlayerOrMachineProfile(PLAYER_1)
 pStats.profileName = pStats.profile:GetDisplayName()
@@ -61,6 +62,42 @@ util.drawMiscStats = function()
 				self:settext(t[i])
 				self:xy(-sizes.avatarSize/2 + sw - sizes.hPadding, sizes.vPadding + (sizes.footerHeight - sizes.vPadding) * ((i-1)/#t) )
 			end
+		}
+	end
+	for k,v in pairs(t) do
+		f[#f+1] = m(k)
+	end
+	return f
+end
+
+util.icons = {
+	{name = 'Settings', img = 'cog'},
+	{name = 'Help', img = 'what'},
+}
+
+util.drawIcons = function()
+	local f = Def.ActorFrame {}
+	local t = util.icons
+	local m = function(i)
+		return UIElements.SpriteButton(1, 1, nil) .. {
+			Name = 'avatar',
+			BeginCommand = function(self)
+				self:Load(THEME:GetPathG('Icon', t[i].img))
+				self:addx((i-1)*(sizes.iconSize + sizes.hPadding))
+			end,
+			MouseOverCommand = function(self)
+				self:finishtweening()
+				self:smooth(0.1)
+				self:diffuse(0.5,0.5,0.5,1)
+				TOOLTIP:SetText(t[i].name)
+				TOOLTIP:Show()
+			end,
+			MouseOutCommand = function(self)
+				self:finishtweening()
+				self:smooth(0.1)
+				self:diffuse(1,1,1,1)
+				TOOLTIP:Hide()
+			end,
 		}
 	end
 	for k,v in pairs(t) do

@@ -173,6 +173,7 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
+local pdf_score = stageStats.score
 
 t[#t+1] = Def.ActorFrame {
 	Name = 'timingData',
@@ -216,6 +217,7 @@ t[#t+1] = Def.ActorFrame {
 				end)
 			end,
 			SelectedEvalScoreMessageCommand = function(self, params)
+				pdf_score = params.score
 				self:playcommand('Prep', params)
 			end,
 			UIElements.QuadButton(1,1) .. {
@@ -225,7 +227,7 @@ t[#t+1] = Def.ActorFrame {
 					self:diffuse(1,1,1,0.1)
 				end,
 				MouseOverCommand = function(self)
-					local s, cb = util.calcStatData(stageStats.score, 4)
+					local s, cb = util.calcStatData(pdf_score, 4)
 					local txt = string.format(
 						'%s: %5.2fms\n%s: %5.2fms\n%s: %5.2fms\n%s: %s/%s',
 						'Mean', s.mean,

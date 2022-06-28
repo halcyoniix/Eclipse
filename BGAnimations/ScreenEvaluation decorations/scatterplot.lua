@@ -19,8 +19,12 @@ t[#t+1] = LoadActorWithParams("../_offsetplot.lua", {sizing = {Width = sizes.sca
 	Name = 'offsetPlot',
 	InitCommand = function(self)
 		self:xy(-sizes.scatterplotContainer.w/2, -(sizes.scatterplotContainer.h/2) + sizes.vPadding*2 )
+		self:queuecommand('Set', {score = stageStats.score})
 	end,
-	OnCommand = function(self)
+	SelectedEvalScoreMessageCommand = function(self, params)
+				self:playcommand('Set', params)
+			end,
+	SetCommand = function(self, params)
 		if stageStats.score ~= nil and stageStats.steps ~= nil then
 			if stageStats.score:HasReplayData() then
 				local offsets = stageStats.score:GetOffsetVector()
@@ -30,21 +34,15 @@ t[#t+1] = LoadActorWithParams("../_offsetplot.lua", {sizing = {Width = sizes.sca
 						offsets[i] = 1000
 					end
 				end
-				local tracks = stageStats.score:GetTrackVector()
-				local types = stageStats.score:GetTapNoteTypeVector()
-				local noterows = stageStats.score:GetNoteRowVector()
-				local holds = stageStats.score:GetHoldNoteVector()
-				local timingdata = stageStats.steps:GetTimingData()
-				local lastSecond = stageStats.steps:GetLastSecond()
 
 				self:playcommand("LoadOffsets", {
 					offsetVector = offsets,
-					trackVector = tracks,
-					timingData = timingdata,
-					noteRowVector = noterows,
-					typeVector = types,
-					holdVector = holds,
-					maxTime = lastSecond,
+					trackVector = stageStats.score:GetTrackVector(),
+					timingData = stageStats.steps:GetTimingData(),
+					noteRowVector = stageStats.score:GetNoteRowVector(),
+					typeVector = stageStats.score:GetTapNoteTypeVector(),
+					holdVector = stageStats.score:GetHoldNoteVector(),
+					maxTime = stageStats.steps:GetLastSecond(),
 					judgeSetting = stageStats.judgeSetting,
 					columns = stageStats.steps:GetNumColumns(),
 					rejudged = stageStats.rejudged,

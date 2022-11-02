@@ -8,15 +8,15 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand = function(self)
 		self:x(scx)
 		self:SetUpdateFunction(function()
-			local year = Year()
+--[[			local year = Year()
 			local month = MonthOfYear() + 1
 			local day = DayOfMonth()
 			local hour = Hour()
 			local minute = Minute()
 			local second = Second()
-			self:GetChild("currentTime"):settextf("%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second)
+			self:GetChild("currentTime"):settextf("%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second)--]]
 			local sessiontime = GAMESTATE:GetSessionTime()
-			self:GetChild('sessionTime'):settextf('%s: %s', THEME:GetString('GeneralInfo', 'SessionTime'), SecondsToHHMMSS(sessiontime)) 
+			self:GetChild('sessionTime'):settextf('%s: %s', THEME:GetString('GeneralInfo', 'SessionTime'), SecondsToHHMMSS(sessiontime))
 		end)
 	end,
 
@@ -39,11 +39,10 @@ t[#t+1] = Def.ActorFrame {
 		Name = 'currentTime',
 		InitCommand = function(self)
 			self:halign(1)
-
 			self:xy(scx - sizes.hPadding, sizes.headerHeight/2)
 		end
 	},
-	--[[LoadSizedFont('header') .. {
+	LoadSizedFont('header') .. {
 		Name = 'currentScreen',
 		OnCommand = function(self)
 			local name = SCREENMAN:GetTopScreen():GetName()
@@ -60,7 +59,7 @@ t[#t+1] = Def.ActorFrame {
 				self:settextf('%s' .. ((name == 'ScreenEvaluationNormal' or name == 'ScreenSelectMusic') and ': %s' or ''), THEME:GetString(name, 'HeaderText'), GAMESTATE:GetCurrentSong():GetGroupName())
 			end
 		end
-	},--]]
+	},
 	util.drawIcons () .. {
 		OnCommand = function(self)
 			self:xy(-scx + sizes.hPadding, sizes.headerHeight/2)
@@ -74,7 +73,7 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = Def.ActorFrame {
 	Name = 'footer',
 	InitCommand = function(self) 
-		self:xy(scx,sh) 
+		self:xy(scx,sh)
 	end,
 	Def.Quad {
 		Name = 'bg',

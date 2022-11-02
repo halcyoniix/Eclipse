@@ -52,7 +52,6 @@ t[#t+1] = Def.Sprite {
 	end
 }
 
-
 local div = 100
 t.InitCommand = function(self)
 	self:SetUpdateFunction(function(self)

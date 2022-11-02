@@ -22,8 +22,8 @@ t[#t+1] = LoadActorWithParams("../_offsetplot.lua", {sizing = {Width = sizes.sca
 		self:queuecommand('Set', {score = stageStats.score})
 	end,
 	SelectedEvalScoreMessageCommand = function(self, params)
-				self:playcommand('Set', params)
-			end,
+		self:playcommand('Set', params)
+	end,
 	SetCommand = function(self, params)
 		if stageStats.score ~= nil and stageStats.steps ~= nil then
 			if stageStats.score:HasReplayData() then

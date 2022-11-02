@@ -43,6 +43,7 @@ t[#t+1] = Def.Sprite {
 	OnCommand = function(self)
 		local path = THEME:GetPathG('Common', 'logo')
 		self:Load(path):zoom(0.3):xy(sw - 60*2,scy):halign(1)
+		self:diffuse(25/255,25/255,25/255, 1)
 		self:diffusealpha(0):sleep(0.1):cropright(0.5):cropleft(0.5)
 		self:decelerate(0.7)
 		self:diffusealpha(1):cropright(0):cropleft(0)

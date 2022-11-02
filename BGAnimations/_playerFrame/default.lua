@@ -32,7 +32,7 @@ end--]]
 util.miscStats = {
 	GAMESTATE:GetEtternaVersion(),
 	string.format('%s %s', THEME:GetString('GeneralInfo', 'ProfileJudge'), GetTimingDifficulty()),
-	string.format('%s %s', SecondsToHHMMSS(pStats.playTime), THEME:GetString('GeneralInfo', 'ProfilePlaytime')),
+	string.format('%04d-%02d-%02d %02d:%02d:%02d', 0, 0, 0, 0, 0, 0)
 }
 
 util.drawPlayerStats = function()
@@ -61,6 +61,17 @@ util.drawMiscStats = function()
 			InitCommand = function(self)
 				self:settext(t[i])
 				self:xy(-sizes.avatarSize/2 + sw - sizes.hPadding, sizes.vPadding + (sizes.footerHeight - sizes.vPadding) * ((i-1)/#t) )
+				if i == 3 then
+					self:GetParent():SetUpdateFunction(function()
+						local year = Year()
+						local month = MonthOfYear() + 1
+						local day = DayOfMonth()
+						local hour = Hour()
+						local minute = Minute()
+						local second = Second()
+						self:settextf('%04d-%02d-%02d %02d:%02d:%02d', year, month, day, hour, minute, second)
+					end)
+				end
 			end
 		}
 	end

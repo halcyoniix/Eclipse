@@ -10,67 +10,68 @@ local scale16x9 = {
 	sw = 854, sh = 480
 }
 local sizes = {
-	border = 3,
-	headerHeight = (30 / 720) * sh,
-	footerHeight = (80 / 720) * sh,
-	avatarSize = (80 / 720) * sh,
-	hPadding = (10 / 1280) * scale16x9.sw,
-	vPadding = (10 / 720) * scale16x9.sh,
+	border = 4,
+	headerHeight = 30,
+	footerHeight = 80,
+	avatarSize = 80,
+	hPadding = 10,
+	vPadding = 10,
+	iconSize = 18,
 
 	bannerSize = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (140 / 720) * scale16x9.sh,
+		w = 460,
+		h = 140,
 	},
 
 	bannerContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (190 / 720) * scale16x9.sh,
-		x = (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (145 / 720) * scale16x9.sh,
+		w = 460,
+		h = 190,
+		x = capWideScale(240, 390),
+		y = 145,
 	},
 
 	scoreContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (370 / 720) * scale16x9.sh,
-		x = (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (435 / 720) * scale16x9.sh,
+		w = 460,
+		h = 370,
+		x = capWideScale(240, 390),
+		y = 435,
 	},
 
 	leaderboardContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (370 / 720) * scale16x9.sh,
-		x = sw - (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (235 / 720) * scale16x9.sh,
+		w = 460,
+		h = 370,
+		x = sw - capWideScale(240, 390),
+		y = 235,
 	},
 
 	scatterplotContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (190 / 720) * scale16x9.sh,
-		x = sw - (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (525 / 720) * scale16x9.sh,
+		w = 460,
+		h = 190,
+		x = sw - capWideScale(240, 390),
+		y = 525,
 	},
 
-	magicVPadding = 3.6,
+	magicVPadding = 3,
 
 	modList = {
-		vMargin = (50 / 720) * scale16x9.sh,
-		vPadding = ((20) / 720) * scale16x9.sh,
+		vMargin = 50,
+		vPadding = 20,
 	},
 
 	judgment = {
-		barLength = (210 / 1280) * scale16x9.sw,
+		barLength = 210,
 		barGirth = 3,
-		barPadding = (30 / 720) * scale16x9.sh,
+		barPadding = 30,
 	},
 
 	lifeGraph = {
-		w = (210 / 1280) * scale16x9.sw,
-		h = (100 / 720) * scale16x9.sh
+		w = 210,
+		h = 100
 	},
 
 	leaderboardScore = {
-		w = (440 / 1280) * scale16x9.sw,
-		h = (50 / 720) * scale16x9.sh,
+		w = 440,
+		h = 50,
 	}
 }
 
@@ -90,6 +91,14 @@ local judges = {
 	'TapNoteScore_W4',
 	'TapNoteScore_W5',
 	'TapNoteScore_Miss',
+}
+local fuckyou = {
+	'W1',
+	'W2',
+	'W3',
+	'W4',
+	'W5',
+	'Miss',
 }
 local extraJudges = {
 	{'Holds','RadarCategory_Holds'},
@@ -209,7 +218,7 @@ util.makeJudgments = function()
 				LoadSizedFont('small') .. {
 					Name = 'judgmentName',
 					InitCommand = function(self)
-						self:settext(THEME:GetString('TapNoteScore', judges[i]))
+						self:settext(THEME:GetString('TapNoteScore', fuckyou[i]))
 						self:halign(0)
 						self:maxwidth(150)
 					end
@@ -234,13 +243,15 @@ util.makeJudgments = function()
 						self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
 						self:diffuse(0.5,0.5,0.5,1)
 						self:halign(1)
-						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
+						self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth())
+						--self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
 					end,
 					SelectedEvalScoreMessageCommand = function(self, curScore)
 						if curScore.score then
 							local jud = curScore.judgments[i]
 							self:settextf('%5.2f%s', (jud / totalTaps) * 100, '%')
-							self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
+							self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth())
+							--self:x(sizes.judgment.barLength - self:GetParent():GetChild('judgmentCount'):GetWidth() - sizes.hPadding/4)
 						end
 					end
 				},
@@ -376,14 +387,16 @@ end
 
 util.allTheScores = {}
 util.curPage = 1
-local pageLimit = 6
+util.pageSize = 6
 local currentScoreIndex
 util.curRate = string.format('%.1fx',stageStats.score:GetMusicRate())
+--ms.ok(util.curRate)
 for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
 	if not util.allTheScores[rate] then
 		util.allTheScores[rate] = {}
 	end
 	for _, curScore in pairs(scoreTable) do
+		ms.ok(GAMESTATE:GetCurrentSteps())
 		local percentage = curScore:GetWifeScore() * 100
 		if percentage ~= 0 then
 			local a = {0,0,0,0,0,0}
@@ -397,21 +410,23 @@ for rate, scoreTable in pairs(getRateTable(getScoresByKey(PLAYER_1))) do
 				grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(percentage / 100))),
 				date = curScore:GetDate(),
 				ssr = string.format('%5.2f',curScore:GetSkillsetSSR('Overall')),
-				rate = rate
+				rate = rate,
+				steps = GAMESTATE:GetCurrentSteps()
 			})
 		end
 	end
 end
 
-table.sort(util.allTheScores, function(a, b) 
-	return a.ssr > b.ssr
+table.sort(util.allTheScores, function(a, b)
+	return a.score > b.score
 end)
+
 
 util.makeScores = function(score)
 
 	util.selectedScore = score
 	local s = function(i, p)
-		local y_pos = math.mod(i-1, pageLimit)
+		local y_pos = math.mod(i-1, util.pageSize)
 		return Def.ActorFrame {
 			OnCommand = function(self)
 				self:addy(sizes.vPadding + (sizes.leaderboardScore.h + sizes.vPadding/2) * (y_pos))
@@ -523,15 +538,27 @@ util.makeScores = function(score)
 			MESSAGEMAN:Broadcast('UpdateLeaderboardScorePage', {page = util.curPage})
 		end
 	}
+	local _list_0 = util.allTheScores[util.curRate]
+	local _max_0 = util.pageSize * (util.curPage)
+	for _index_0 = (util.pageSize * (util.curPage - 1)) + 1, _max_0 < 0 and #_list_0 + _max_0 or _max_0 do
+		local scoreObject = _list_0[_index_0]
+		if scoreObject then
+			local page = util.curPage
+			if not f[page] then f[page] = Def.ActorFrame{} end
+			f[page][#f[page]+1] = s(_index_0, page)
+		end
+	end
 
-	for i = 1,#util.allTheScores[util.curRate] do
+--[[	for i = 1,#util.allTheScores[util.curRate] do
 		local page = math.floor((i-1)/pageLimit) + 1
 		if not f[page] then f[page] = Def.ActorFrame{} end
 		f[page][#f[page]+1] = s(i, page)
 	end
+--]]
 
 	return f
 end
+
 
 t[#t+1] = LoadActorWithParams('banner.lua', {
 	sizes = sizes,

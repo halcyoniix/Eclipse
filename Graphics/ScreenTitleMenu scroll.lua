@@ -1,22 +1,24 @@
 local gc = Var("GameCommand")
 local t = Def.ActorFrame {}
 
+
+local s = 0.6
+
 t[#t+1] = Def.ActorFrame {
 	OnCommand = function(self)
-		self:x(-scx + 40)
+		self:zoom(s)
+		self:y(-scy + ((sh/3)*2))
 		local txt, bg = self:GetChild('Button'):GetChild('Text'), self:GetChild('Button'):GetChild('BG')
 		local selectionName = THEME:GetString(SCREENMAN:GetTopScreen():GetName(), gc:GetText())
 		txt:settext(selectionName)
-		txt:halign(0)
-		bg:zoomto(txt:GetZoomedWidth() + 10,30):addx(-5)
+		bg:zoomto(400, 60)
 		bg:diffuse(0.1, 0.1, 0.1, 1)
-		bg:halign(0)
 	end,
-	UIElements.TextButton(1, 1, 'Common Normal') .. {
+	UIElements.TextButton(1, 1, 'Common Large') .. {
 		Name = 'Button',
 		GainFocusCommand = function(self)
 			self:GetParent():linear(0.06)
-			self:GetParent():zoom(1.02)
+			self:GetParent():zoom(s+0.02)
 
 			self:finishtweening()
 			self:linear(0.02)
@@ -24,7 +26,7 @@ t[#t+1] = Def.ActorFrame {
 		end,
 		LoseFocusCommand = function(self)
 			self:GetParent():linear(0.06)
-			self:GetParent():zoom(1)
+			self:GetParent():zoom(s)
 
 			self:finishtweening()
 			self:linear(0.02)

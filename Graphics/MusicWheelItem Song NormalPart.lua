@@ -1,23 +1,20 @@
 local t = Def.ActorFrame {}
-local scale16x9 = {
-	sw = 854, sh = 480
-}
 local sizes = {
 	border = 3,
-	headerHeight = (30 / 720) * sh,
-	footerHeight = (80 / 720) * sh,
-	avatarSize = (80 / 720) * sh,
-	hPadding = (10 / 1280) * scale16x9.sw,
-	vPadding = (10 / 720) * scale16x9.sh,
+	headerHeight = 30,
+	footerHeight = 80,
+	avatarSize = 80,
+	hPadding = 10,
+	vPadding = 10,
 
 	songPanel = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (70 / 720) * scale16x9.sh
+		w = 460 ,
+		h = 70
 	},
 
 	bannerIcon = {
-		w = (140 / 1280) * scale16x9.sw,
-		h = (70 / 720) * scale16x9.sh
+		w = 140,
+		h = 70
 	},
 }
 
@@ -27,10 +24,10 @@ t.SetMessageCommand = function(self, params)
 		local grade = self:GetParent():GetChild('GradeP1')
 		if grade ~= nil then
 			grade:RunCommandsOnChildren(function(self)
-				self:xy(-(sizes.songPanel.w/2) + sizes.bannerIcon.w + 3, 5)
-				self:zoom(FONTSIZE.small)
+				self:xy(-(sizes.songPanel.w/2) + sizes.bannerIcon.w + sizes.hPadding, 10)
+				self:zoom(FONTSIZE.medium)
 				self:halign(0)
-				self:maxwidth(299)
+				self:maxwidth(300)
 				self:diffuse(colorByGrade(tostring(hgrade)))
 			end)
 		end
@@ -64,8 +61,8 @@ t[#t+1] = Def.ActorFrame{
 t[#t+1] = Def.Quad {
 	InitCommand = function(self)
 		self:halign(0)
-		self:setsize((sizes.songPanel.w - sizes.bannerIcon.w) - sizes.hPadding*2 , 1)
-		self:xy(-60 + sizes.hPadding/2, 11)
+		self:setsize((sizes.songPanel.w - sizes.bannerIcon.w) - sizes.hPadding*2, 1)
+		self:xy((-sizes.songPanel.w/2) + sizes.bannerIcon.w + sizes.hPadding, 18)
 		self:diffusealpha(0.3)
 	end
 }
@@ -74,7 +71,7 @@ t[#t+1] = Def.Sprite {
 	Name = 'bannerIcon',
 	InitCommand = function(self)
 		--self:halign(0)
-		self:x((sizes.bannerIcon.w/2)-(sizes.songPanel.w/2) + sizes.border - 3)
+		--self:x((sizes.bannerIcon.w/2)-(sizes.songPanel.w/2) + sizes.border - 3)
 	end,
 	SetMessageCommand = function(self,params)
 		local song = params.Song
@@ -87,8 +84,9 @@ t[#t+1] = Def.Sprite {
 		end
 		local sx, sy = sizes.bannerIcon.w - sizes.border, sizes.bannerIcon.h - sizes.border
 		self:Load(bnpath)
+		self:scaletoclipped(sx/2, sy/2, -sx/2, -sy/2)
 		self:setsize(sizes.bannerIcon.w - sizes.border, sizes.bannerIcon.h - sizes.border)
-		--self:scaletocover(-sx/2, -sy/2, sx/2, sy/2) -- ???
+		self:x((sizes.bannerIcon.w/2)-(sizes.songPanel.w/2) + sizes.border - 3)
 		end
 	end
 }

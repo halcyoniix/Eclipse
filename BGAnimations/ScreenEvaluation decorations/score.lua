@@ -22,7 +22,7 @@ t[#t+1] = Def.ActorFrame {
 		Name = 'percentageFrame',
 		InitCommand = function(self)
 			self:RunCommandsOnChildren(function(self)
-				self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding, -sizes.scoreContainer.h/2 + sizes.vPadding - sizes.magicVPadding/4)
+				self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding, -sizes.scoreContainer.h/2 + sizes.vPadding/2)
 			end)
 		end,
 		LoadSizedFont('large').. {
@@ -52,7 +52,7 @@ t[#t+1] = Def.ActorFrame {
 	Def.ActorFrame {
 		Name = 'songDifficulty',
 		InitCommand = function(self)
-			self:xy( (sizes.scoreContainer.w/2) - sizes.hPadding/2, -sizes.scoreContainer.h/2 + sizes.vPadding - sizes.magicVPadding/4)
+			self:xy( (sizes.scoreContainer.w/2) - sizes.hPadding/2, -sizes.scoreContainer.h/2 + sizes.vPadding/2)
 			self:RunCommandsOnChildren(function(self)
 				self:halign(1):valign(0)
 				--self:maxwidth(sizes.bannerContainer.w)

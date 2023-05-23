@@ -10,70 +10,83 @@ local scale16x9 = {
 	sw = 854, sh = 480
 }
 local sizes = {
-	border = 3,
-	headerHeight = (30 / 720) * sh,
-	footerHeight = (80 / 720) * sh,
-	avatarSize = (80 / 720) * sh,
-	hPadding = (10 / 1280) * scale16x9.sw,
-	vPadding = (10 / 720) * scale16x9.sh,
+	border = 4,
+	headerHeight = 30,
+	footerHeight = 80,
+	avatarSize = 80,
+	hPadding = 10,
+	vPadding = 10,
+	iconSize = 18,
+
+	wheel = {
+		w = 460,
+		h = sh,
+		x = 890,
+		songPanel = {
+			w = 460 ,
+			h = 70
+		},
+		bannerIcon = {
+			w = 140,
+			h = 70
+		},
+	},
 
 	bannerSize = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (140 / 720) * scale16x9.sh,
+		w = 460,
+		h = 140,
 	},
 
 	bannerContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (190 / 720) * scale16x9.sh,
-		x = (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (145 / 720) * scale16x9.sh,
+		w = 460,
+		h = 190,
+		x = capWideScale(240, 390),
+		y = 145,
 	},
 
 	scoreContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (370 / 720) * scale16x9.sh,
-		x = (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (435 / 720) * scale16x9.sh,
+		w = 460,
+		h = 370,
+		x = capWideScale(240, 390),
+		y = 435,
 	},
 
 	leaderboardContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (370 / 720) * scale16x9.sh,
-		x = sw - (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (235 / 720) * scale16x9.sh,
+		w = 460,
+		h = 370,
+		x = sw - capWideScale(240, 390),
+		y = 235,
 	},
 
 	scatterplotContainer = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (190 / 720) * scale16x9.sh,
-		x = sw - (capWideScale(240, 390) / 1280) * scale16x9.sw,
-		y = (525 / 720) * scale16x9.sh,
+		w = 460,
+		h = 190,
+		x = sw - capWideScale(240, 390),
+		y = 525,
 	},
 
-	magicVPadding = 3.6,
+	magicVPadding = 3,
 
 	modList = {
-		vMargin = (50 / 720) * scale16x9.sh,
-		vPadding = ((20) / 720) * scale16x9.sh,
+		vMargin = 50,
+		vPadding = 20,
 	},
 
 	judgment = {
-		barLength = (210 / 1280) * scale16x9.sw,
+		barLength = 210,
 		barGirth = 3,
-		barPadding = (30 / 720) * scale16x9.sh,
+		barPadding = 30,
 	},
 
 	lifeGraph = {
-		w = (210 / 1280) * scale16x9.sw,
-		h = (100 / 720) * scale16x9.sh
+		w = 210,
+		h = 100
 	},
 
 	leaderboardScore = {
-		w = (440 / 1280) * scale16x9.sw,
-		h = (50 / 720) * scale16x9.sh,
+		w = 440,
+		h = 50,
 	},
-
-
 
 	tab = {
 		w = 40,
@@ -155,6 +168,11 @@ util.makeTabs = function()
 	return f
 end
 
+t[#t+1] = LoadActorWithParams('wheel', {
+	sizes = sizes,
+	util = util
+})
+
 t[#t+1] = LoadActorWithParams('main.lua', {
 	sizes = sizes,
 	stageStats = stageStats,
@@ -207,6 +225,6 @@ t[#t+1] = LoadActorWithParams('tab_tags.lua', {
 
 
 
-t[#t + 1] = LoadActor("../_mousewheelscroll")
+--t[#t + 1] = LoadActor("../_mousewheelscroll")
 collectgarbage()
 return t

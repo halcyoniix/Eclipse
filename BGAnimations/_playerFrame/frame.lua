@@ -31,7 +31,6 @@ t[#t+1] = Def.ActorFrame {
 	LoadSizedFont('header') .. {
 		Name = 'sessionTime',
 		InitCommand = function(self)
-			self:zoom(0.5)
 			self:y(sizes.headerHeight/2)
 		end
 	},
@@ -49,8 +48,9 @@ t[#t+1] = Def.ActorFrame {
 			self:maxwidth(500)
 			self:halign(1)
 			self:xy(scx - sizes.hPadding, sizes.headerHeight/2)
-			self:settextf('%s' .. ((name == 'ScreenEvaluationNormal' or name == 'ScreenSelectMusic') and ': %s' or ''), THEME:GetString(name, 'HeaderText'), GAMESTATE:GetCurrentSong():GetGroupName())
+			self:settext(THEME:GetString(name, 'HeaderText'))
 		end,
+		--[[
 		CurrentSongChangedMessageCommand = function(self)
 			local name = SCREENMAN:GetTopScreen():GetName()
 			if not GAMESTATE:GetCurrentSong() then
@@ -59,6 +59,7 @@ t[#t+1] = Def.ActorFrame {
 				self:settextf('%s' .. ((name == 'ScreenEvaluationNormal' or name == 'ScreenSelectMusic') and ': %s' or ''), THEME:GetString(name, 'HeaderText'), GAMESTATE:GetCurrentSong():GetGroupName())
 			end
 		end
+		]]
 	},
 	util.drawIcons () .. {
 		OnCommand = function(self)

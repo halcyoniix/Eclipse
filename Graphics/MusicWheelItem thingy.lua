@@ -1,23 +1,20 @@
 local t = Def.ActorFrame {}
-local scale16x9 = {
-	sw = 854, sh = 480
-}
 local sizes = {
 	border = 3,
-	headerHeight = (30 / 720) * sh,
-	footerHeight = (80 / 720) * sh,
-	avatarSize = (80 / 720) * sh,
-	hPadding = (10 / 1280) * scale16x9.sw,
-	vPadding = (10 / 720) * scale16x9.sh,
+	headerHeight = 30,
+	footerHeight = 80,
+	avatarSize = 80,
+	hPadding = 10,
+	vPadding = 10,
 
 	songPanel = {
-		w = (460 / 1280) * scale16x9.sw,
-		h = (70 / 720) * scale16x9.sh
+		w = 460 ,
+		h = 70
 	},
 
 	bannerIcon = {
-		w = (140 / 1280) * scale16x9.sw,
-		h = (70 / 720) * scale16x9.sh
+		w = 140,
+		h = 70
 	},
 }
 

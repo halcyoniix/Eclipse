@@ -1,5 +1,4 @@
 local sizes = Var('sizes')
-local stageStats = Var('stageStats')
 local util = Var('util')
 
 
@@ -21,6 +20,9 @@ local t = Def.ActorFrame {
 	HideCommand = function(self, params)
 		self:finishtweening():smooth(0.2):diffusealpha(0)
 	end,
+	WheelSettledMessageCommand = function(self, params)
+		self:playcommand('UpdateThings', params)
+	end
 }
 
 t[#t+1] = Def.ActorFrame {
@@ -29,7 +31,7 @@ t[#t+1] = Def.ActorFrame {
 		Name = 'percentageFrame',
 		InitCommand = function(self)
 			self:RunCommandsOnChildren(function(self)
-				self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding, -sizes.scoreContainer.h/2 + sizes.vPadding - sizes.magicVPadding/4)
+				self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding, -sizes.scoreContainer.h/2 + sizes.vPadding/2)
 			end)
 		end,
 		LoadSizedFont('large').. {
@@ -49,7 +51,7 @@ t[#t+1] = Def.ActorFrame {
 			OnCommand = function(self)
 				self:halign(0):valign(0)
 				self:maxwidth(294)
-				self:settextf('%s %5.2f%%', 'AA', '74.83')
+				--self:settextf('%s %5.2f%%', 'AA', '74.83')
 				--if stageStats.score then
 				--local p = stageStats.score:GetWifeScore() * 100
 				--local grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(p / 100)))
@@ -69,7 +71,7 @@ t[#t+1] = Def.ActorFrame {
 	Def.ActorFrame {
 		Name = 'songDifficulty',
 		InitCommand = function(self)
-			self:xy( (sizes.scoreContainer.w/2) - sizes.hPadding/2, -sizes.scoreContainer.h/2 + sizes.vPadding - sizes.magicVPadding/4)
+			self:xy( (sizes.scoreContainer.w/2) - sizes.hPadding/2, -sizes.scoreContainer.h/2 + sizes.vPadding/2)
 			self:RunCommandsOnChildren(function(self)
 				self:halign(1):valign(0)
 				--self:maxwidth(sizes.bannerContainer.w)

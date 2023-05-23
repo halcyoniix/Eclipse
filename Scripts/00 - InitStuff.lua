@@ -5,37 +5,41 @@ sh = SCREEN_HEIGHT
 
 THEMEINFO = {
 	name = 'Eclipse',
-	version = '0.8',
+	version = '-1???',
 	date = 'MM-DD-YYYY'
 }
 
 FONTSIZE = {
-	header = 0.5,
-	medium = 0.4,
-	large = 0.6,
-	small = 0.4
+	large = 1,
+	medium = 0.6,
+	header = 0.75,
+	small = 0.6
 }
 
 FUCKMETRICS = {}
 
+local m = -60
+
 FUCKMETRICS.TitleOnCommand = function(self)
 	self:halign(0)
 	self:zoom(FONTSIZE.header)
-	self:xy(-60, -15)
+	self:xy(m, -20)
 	self:maxwidth(400)
+	self:diffuse(1,1,1,1)
 end
 
 FUCKMETRICS.ArtistOnCommand = function(self)
 	self:halign(0)
-	self:zoom(0.35)
-	self:xy(-60, -5)
+	self:zoom(FONTSIZE.small)
+	self:xy(m, -5)
 	self:maxwidth(415)
+	self:diffuse(1,1,1,1)
 end
 
 FUCKMETRICS.SubtitleOnCommand = function(self)
 	self:halign(0)
-	self:zoom(0.35)
-	self:xy(-60, 18)
+	self:zoom(FONTSIZE.small)
+	self:xy(m, 28)
 	self:maxwidth(574)
 	self:diffuse(0.6,0.6,0.6,1)
 end
@@ -43,14 +47,14 @@ end
 FUCKMETRICS.SectionCollapsedOnCommand = function(self)
 	self:stopeffect()
 	self:halign(0)
-	self:x(-60)
+	self:x(m)
 	self:zoom(FONTSIZE.header):maxwidth(400)
 end
 
 FUCKMETRICS.SectionExpandedOnCommand = function(self)
 	self:stopeffect()
 	self:halign(0)
-	self:x(-60)
+	self:x(m)
 	self:zoom(FONTSIZE.header):maxwidth(400)
 end
 

@@ -27,7 +27,7 @@ t[#t+1] = Def.ActorFrame {
 	LoadSizedFont('header') .. {
 		Name = 'pageCount',
 		OnCommand = function(self)
-			self:settext('Page '.. util.curPage ..' of '.. 0)
+			self:settext('Page '.. util.curPage ..' of '.. math.ceil(#util.allTheScores[util.curRate]/util.pageSize))
 			self:valign(1):halign(0)
 			self:x((-sizes.leaderboardContainer.w/2) + sizes.hPadding)
 			self:y(sizes.leaderboardContainer.h - (sizes.leaderboardScore.h / 2) - sizes.vPadding)

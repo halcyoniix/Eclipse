@@ -3,7 +3,6 @@ local t = Def.ActorFrame {}
 t[#t+1] = LoadActor('_playerFrame/default.lua')
 t[#t+1] = LoadActor('_mouse.lua')
 
-local key = 'X8ca18c993d793f4bc2bb63a40139170a901504bc'
 t[#t+1] = Def.ActorFrame{
 	OnCommand = function(self)
 		self:xy(scx,sh-20)
@@ -43,8 +42,7 @@ t[#t+1] = Def.ActorFrame{
 		ClickCommand = function(self, params)
 			if params.update == 'OnMouseDown' then
 				local score = SCOREMAN:GetScoresByKey(key)
-
-				for k,v in pairs(score['1.0x']:GetScores()) do
+				for k,v in pairs(score[string.format('%.1fx', getCurRateValue())]:GetScores()) do
 					if v:HasReplayData() then
 						SCREENMAN:GetTopScreen():ShowEvalScreenForScore(v)
 						break

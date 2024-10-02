@@ -21,9 +21,71 @@ local t = Def.ActorFrame {
 		self:finishtweening():smooth(0.2):diffusealpha(0)
 	end,
 	WheelSettledMessageCommand = function(self, params)
-		self:playcommand('UpdateThings', params)
+		self:playcommand('UpdateMe', {highscore = GetDisplayScore(), selection = params})
 	end
 }
+
+local statNames = {
+	THEME:GetString("RadarCategory", "Notes"),
+	THEME:GetString("RadarCategory", "Jumps"),
+	THEME:GetString("RadarCategory", "Hands"),
+	THEME:GetString("RadarCategory", "Holds"),
+	THEME:GetString("RadarCategory", "Rolls"),
+	THEME:GetString("RadarCategory", "Mines"),
+}
+
+-- output of the relevant radars function is in a certain order
+-- it isnt the order of the above list
+-- so this list takes those indices and points them in another direction
+local statMapping = {
+	   -- output -> desired
+	1, -- notes - notes
+	2, -- jumps - jumps
+	3, -- hands - hands
+	4, -- holds - holds
+	6, -- mines - rolls
+	5, -- rolls - mines
+	7, -- lifts
+	8, -- fakes
+}
+
+local makeChartStats = function()
+	local a = function(i)
+		return Def.ActorFrame {
+			Name = 'stat'..i,
+			InitCommand = function(self)
+				self:y(20*(i-1))
+			end,
+			LoadSizedFont('small') .. {
+				Name = 'label',
+				InitCommand = function(self)
+					self:halign(0)
+					self:settext(statNames[i])
+				end
+			},
+			LoadSizedFont('small') .. {
+				Name = 'count',
+				InitCommand = function(self)
+					self:halign(1)
+					self:x(140 - sizes.hPadding*2)
+				end,
+				UpdateMeCommand = function(self, params)
+					if params.selection.song then
+						self:settext(params.selection.steps:GetRelevantRadars()[statMapping[i]])
+					else
+						self:settext(0)
+					end
+				end
+			},
+		}
+	end
+	local t = Def.ActorFrame{ Name = 'chartStats' }
+	for i = 1, #statNames do
+		t[#t+1] = a(i)
+	end
+	return t
+end
+
 
 t[#t+1] = Def.ActorFrame {
 	Name = 'topScore',
@@ -51,58 +113,78 @@ t[#t+1] = Def.ActorFrame {
 			OnCommand = function(self)
 				self:halign(0):valign(0)
 				self:maxwidth(294)
-				--self:settextf('%s %5.2f%%', 'AA', '74.83')
-				--if stageStats.score then
-				--local p = stageStats.score:GetWifeScore() * 100
-				--local grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(p / 100)))
-				--self:settextf('%s %5.2f%%', grade, p)
-				--	self:diffuse(colorByGrade(GetGradeFromPercent(p / 100)))
-				--else
-				--	self:settext('wtf no score?')
-				--end
+				self:playcommand('UpdateMe', {highscore = GetDisplayScore()})
+			end,
+			UpdateMeCommand = function(self, params)
+				if params.highscore then
+					local wife = params.highscore:GetWifeScore()
+					local p = checkWifeStr(wife)
+					local grade = THEME:GetString("Grade", ToEnumShortString(GetGradeFromPercent(wife)))
+					self:settextf('%s %s', grade, p)
+					self:diffuse(colorByGrade(params.highscore:GetWifeGrade()))
+				else
+					self:settext('No Score')
+					self:diffuse(0.5,0.5,0.5,1)
+				end
 			end,
 			ModifyCommand = function(self, params)
 				if util.tab.curSelected == 'General' then
-					--ms.ok(params)
 				end
 			end
 		},
 	},
 	Def.ActorFrame {
-		Name = 'songDifficulty',
+		Name = 'songStuff',
 		InitCommand = function(self)
-			self:xy( (sizes.scoreContainer.w/2) - sizes.hPadding/2, -sizes.scoreContainer.h/2 + sizes.vPadding/2)
+			self:xy( -(sizes.scoreContainer.w/2) + sizes.hPadding, (-sizes.scoreContainer.h/2) + sizes.vPadding + 40)
 			self:RunCommandsOnChildren(function(self)
-				self:halign(1):valign(0)
-				--self:maxwidth(sizes.bannerContainer.w)
+				self:halign(0):valign(0)
 			end)
 		end,
-		LoadSizedFont('large') .. {
-			Name = 'clearType',
-			OnCommand = function(self)
-				--self:settextf('%5.2f', ssr)
-				--self:diffuse(colorByMSD(ssr))
-				self:maxwidth(120)
-				self:settext('SDCB')
+		LoadSizedFont('small') .. {
+			Name = 'clearTypeAndDate',
+			UpdateMeCommand = function(self, params)
+				if params.highscore then
+					local ct = getClearTypeFromScore(params.highscore, 0)
+					local date = params.highscore:GetDate()
+					self:settextf('%s %s', ct, date)
+					self:ClearAttributes()
+					self:AddAttribute(0, {Length = #string.format('%s', ct), Diffuse = getClearTypeFromScore(params.highscore, 2)})
+				else
+					self:ClearAttributes()
+					self:settext('')
+				end
 			end,
 		},
-		Def.Quad {
+	},
+	Def.ActorFrame {
+		Name = 'stepsAndCDTitle',
+		Def.Sprite {
+			Name = 'CDTitle',
+			UpdateMeCommand = function(self, params)
+				if params.selection.song then
+					if params.selection.song:HasCDTitle() then
+						self:Load(params.selection.song:GetCDTitlePath())
+						self:scaletofit(0, -sizes.cdtitle, sizes.cdtitle, 0)
+						return
+					end
+				end
+				self:Load(THEME:GetPathG("", "_blank"))
+			end
+		},
+		makeDivider {y = -270} .. {
 			OnCommand = function(self)
-				self:setsize(1,23)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(1)
-				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, -1)
+				self:xy(sizes.scoreContainer.w/5, 
+					(sizes.scoreContainer.h/2) - (sizes.tab.h*3) - sizes.vPadding*2
+				)
 			end
 		},
 	},
-	Def.Quad {
+	makeChartStats() .. {
 		OnCommand = function(self)
-			self:setsize(sizes.scoreContainer.w - sizes.hPadding*2, 1)
-			self:diffuse(0.3,0.3,0.3,1)
-			self:halign(0.5):valign(1)
-			self:y(-sizes.scoreContainer.h/2 + (sizes.modList.vMargin ))
+			self:x((sizes.scoreContainer.w/2) - 140 + sizes.hPadding)
 		end
-	},
+	}
 }
 
 

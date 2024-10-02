@@ -76,34 +76,25 @@ t[#t+1] = Def.ActorFrame {
 				end
 			end
 		},
-		Def.Quad {
-			OnCommand = function(self)
-				self:setsize(1,23)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(1)
-				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, -1)
-			end
-		},
+		--[[
 		LoadSizedFont('large') .. {
 			Name = 'judgeWindow',
 			OnCommand = function(self)
 				local judge = PREFSMAN:GetPreference("SortBySSRNormPercent") and 4 or GetTimingDifficulty()
 				self:settext('J'..judge)
 				self:diffuse(0.5,0.5,0.5,1)
-				self:x( -sizes.scoreContainer.w/sizes.magicVPadding )
+				self:x( -120 )
 			end
-		},
+		},]]
 	},
 	Def.ActorFrame{
 		Name = 'modList',
 		InitCommand = function(self)
 			self:xy( 0, -sizes.scoreContainer.h/2 + (sizes.modList.vMargin ))
 		end,
-		Def.Quad {
+		makeDivider {x = sizes.scoreContainer.w - sizes.hPadding*2} .. {
 			OnCommand = function(self)
-				self:setsize(sizes.scoreContainer.w - sizes.hPadding*2, 1)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(0.5):valign(1)
+				self:x(-sizes.scoreContainer.w/2 + sizes.hPadding)
 			end
 		},
 		LoadSizedFont('small') .. {
@@ -116,14 +107,11 @@ t[#t+1] = Def.ActorFrame {
 				self:y( sizes.modList.vPadding/2 )
 			end
 		},
-		Def.Quad {
+		makeDivider {x = sizes.scoreContainer.w - sizes.hPadding*2} .. {
 			OnCommand = function(self)
-				self:setsize(sizes.scoreContainer.w - sizes.hPadding*2,1)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(0.5):valign(1)
-				self:y( sizes.modList.vPadding )
+				self:xy(-sizes.scoreContainer.w/2 + sizes.hPadding,sizes.modList.vPadding)
 			end
-		},
+		}
 	},
 
 	Def.ActorFrame {
@@ -161,12 +149,9 @@ t[#t+1] = Def.ActorFrame {
 			},
 		},
 	},
-	Def.Quad {
+	makeDivider{y = -280} .. {
 		OnCommand = function(self)
-			self:setsize(1, (280 / 720 * sh))
-			self:diffuse(0.3,0.3,0.3,1)
-			self:halign(0):valign(1)
-			self:y( sizes.scoreContainer.h/2 - sizes.vPadding )
+			self:y(sizes.scoreContainer.h/2 - sizes.vPadding)
 		end
 	}
 }
@@ -195,11 +180,8 @@ t[#t+1] = Def.ActorFrame {
 			end
 		end,
 	},
-	Def.Quad {
+	makeDivider{x = sizes.scoreContainer.w/2 - sizes.hPadding*2} .. {
 		OnCommand = function(self)
-			self:setsize(sizes.scoreContainer.w/2 - sizes.hPadding*2, 1)
-			self:diffuse(0.3,0.3,0.3,1)
-			self:halign(0):valign(1)
 			self:y( -sizes.scoreContainer.h/2 + (sizes.modList.vMargin + sizes.vPadding*4) + sizes.lifeGraph.h )
 		end
 	},

@@ -16,46 +16,21 @@ FONTSIZE = {
 	small = 0.6
 }
 
-FUCKMETRICS = {}
-
-local m = -60
-
-FUCKMETRICS.TitleOnCommand = function(self)
-	self:halign(0)
-	self:zoom(FONTSIZE.header)
-	self:xy(m, -20)
-	self:maxwidth(400)
-	self:diffuse(1,1,1,1)
-end
-
-FUCKMETRICS.ArtistOnCommand = function(self)
-	self:halign(0)
-	self:zoom(FONTSIZE.small)
-	self:xy(m, -5)
-	self:maxwidth(415)
-	self:diffuse(1,1,1,1)
-end
-
-FUCKMETRICS.SubtitleOnCommand = function(self)
-	self:halign(0)
-	self:zoom(FONTSIZE.small)
-	self:xy(m, 28)
-	self:maxwidth(574)
-	self:diffuse(0.6,0.6,0.6,1)
-end
-
-FUCKMETRICS.SectionCollapsedOnCommand = function(self)
-	self:stopeffect()
-	self:halign(0)
-	self:x(m)
-	self:zoom(FONTSIZE.header):maxwidth(400)
-end
-
-FUCKMETRICS.SectionExpandedOnCommand = function(self)
-	self:stopeffect()
-	self:halign(0)
-	self:x(m)
-	self:zoom(FONTSIZE.header):maxwidth(400)
+makeDivider = function(params)
+	params.x = params.x or 0
+	params.y = params.y or 0
+	return Def.ActorMultiVertex {
+		InitCommand = function(self)
+			local verts = {
+				{{0,0,0}, {1,1,1,1}},
+				{{params.x,params.y,0}, {1,1,1,1}},
+			}
+			self:SetDrawState{Mode = 'DrawMode_LineStrip'}
+			self:SetLineWidth(1)
+			self:SetVertices(verts)
+			self:diffusealpha(0.3)
+		end
+	}
 end
 
 LoadSizedFont = function(s)

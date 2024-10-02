@@ -18,6 +18,8 @@ local sizes = {
 	vPadding = 10,
 	iconSize = 18,
 
+	cdtitle = 110,
+
 	wheel = {
 		w = 460,
 		h = sh,
@@ -89,8 +91,8 @@ local sizes = {
 	},
 
 	tab = {
-		w = 40,
-		h = 14,
+		w = 50,
+		h = 20,
 	}
 }
 

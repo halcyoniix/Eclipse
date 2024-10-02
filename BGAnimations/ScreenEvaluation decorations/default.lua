@@ -339,11 +339,9 @@ util.makeRatios = function()
 					self:halign(0)
 				end)
 			end,
-			Def.Quad {
+			makeDivider{x = sizes.judgment.barLength} .. {
 				OnCommand = function(self)
-					self:setsize(sizes.judgment.barLength, 1):y(-sizes.vPadding*2)
-					self:diffuse(0.3,0.3,0.3,1)
-					self:halign(0):valign(1)
+					self:y(-sizes.vPadding*2)
 				end
 			},
 			Def.ActorFrame {

@@ -141,14 +141,6 @@ t[#t+1] = Def.ActorFrame {
 				self:diffuse(colorByMSD(rating))
 			end
 		},
-		Def.Quad {
-			OnCommand = function(self)
-				self:setsize(1,23)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(1)
-				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, 1)
-			end
-		},
 		Def.ActorFrame {
 			Name = 'musicRate',
 			OnCommand = function(self)

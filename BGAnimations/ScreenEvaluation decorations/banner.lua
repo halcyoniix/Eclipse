@@ -48,7 +48,7 @@ t[#t+1] = Def.ActorFrame {
 			InitCommand = function(self)
 				self:settext(GAMESTATE:GetCurrentSong():GetDisplayMainTitle())
 				self:xy( -(sizes.bannerContainer.w/2) + sizes.hPadding/2, (sizes.bannerContainer.h/2) - sizes.vPadding*2 )
-				self:maxwidth(sizes.bannerContainer.w+150)
+				self:maxwidth(sizes.bannerContainer.w+50)
 			end
 		},
 		LoadSizedFont ('header') .. {
@@ -79,14 +79,7 @@ t[#t+1] = Def.ActorFrame {
 				end
 			end
 		},
-		Def.Quad {
-			OnCommand = function(self)
-				self:setsize(1,23)
-				self:diffuse(0.3,0.3,0.3,1)
-				self:halign(1)
-				self:xy( -sizes.scoreContainer.w/sizes.magicVPadding + sizes.hPadding, 1)
-			end
-		},
+		--[[
 		LoadSizedFont ('large') .. {
 			Name = 'difficultySlot',
 			InitCommand = function(self)
@@ -96,6 +89,7 @@ t[#t+1] = Def.ActorFrame {
 				self:x( -sizes.scoreContainer.w/sizes.magicVPadding )
 			end
 		},
+		]]
 		Def.ActorFrame {
 			Name = 'musicRate',
 			InitCommand = function(self)

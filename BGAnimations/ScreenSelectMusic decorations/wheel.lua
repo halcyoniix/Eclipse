@@ -3,10 +3,39 @@ local stageStats = Var('stageStats')
 local util = Var('util')
 
 local numWheelItems = 14
-
+local visible = true
+local animationSeconds = 0.5
+local hoveredItem = nil
 local wheelItemBase = function()
 	return Def.ActorFrame {
 		Name = 'WheelItemBase',
+		HideWheelMessageCommand = function(self)
+			if not visible then return end
+			visible = false
+			self:finishtweening()
+			self:smooth(animationSeconds)
+			self:diffusealpha(0)
+		end,
+		ShowWheelMessageCommand = function(self)
+			if visible then return end
+			visible = true
+			self:finishtweening()
+			self:smooth(animationSeconds)
+			self:diffusealpha(1)
+		end,
+		ShowSettingsAltMessageCommand = function(self, params)
+			if params and params.name then
+				self:playcommand("HideWheel")
+			else
+				self:playcommand("ShowWheel")
+			end
+		end,
+		WheelSettledMessageCommand = function(self, params)
+			-- just here to update hovered item for controlling the reload stuff
+			if params then
+				hoveredItem = params.hovered
+			end
+		end,
 		Def.Quad {
 			Name = 'ItemBG',
 			InitCommand = function(self)
@@ -90,7 +119,7 @@ end
 local function songActorUpdater(songFrame, song, isCurrentItem)
 	songFrame.Title:settext(song:GetDisplayMainTitle())
 	songFrame.SubTitle:settext(song:GetDisplaySubTitle())
-	songFrame.Artist:settext('~'..song:GetDisplayArtist())
+	songFrame.Artist:settext(song:GetDisplayArtist())
 	songFrame.Grade:playcommand('SetGrade', {grade = song:GetHighestGrade()})
 	songFrame.Favorited:diffusealpha(song:IsFavorited() and 1 or 0)
 	songFrame.Permamirror:diffusealpha(song:IsPermaMirror() and 1 or 0)
@@ -166,7 +195,7 @@ local songActorBuilder = function()
 			SetPositionCommand = function(self)
 				self:xy((-sizes.wheel.songPanel.w/2) + sizes.wheel.bannerIcon.w + sizes.hPadding, (-sizes.wheel.songPanel.h/2) + sizes.vPadding)
 				self:halign(0)
-				self:maxwidth(500)
+				self:maxwidth(400)
 			end
 		},
 		LoadSizedFont('small') .. {
@@ -181,12 +210,9 @@ local songActorBuilder = function()
 				self:maxwidth(sizes.wheel.songPanel.w - (sizes.wheel.bannerIcon.w/2) + sizes.hPadding)
 			end
 		},
-		Def.Quad {
-			InitCommand = function(self)
-				self:halign(0)
-				self:setsize((sizes.wheel.songPanel.w - sizes.wheel.bannerIcon.w) - sizes.hPadding*2, 1)
+		makeDivider {x = (sizes.wheel.songPanel.w - sizes.wheel.bannerIcon.w) - sizes.hPadding*2} .. {
+			OnCommand = function(self)
 				self:xy((-sizes.wheel.songPanel.w/2) + sizes.wheel.bannerIcon.w + sizes.hPadding, 18)
-				self:diffusealpha(0.3)
 			end
 		},
 		LoadSizedFont('small') .. {
@@ -259,14 +285,36 @@ local function getFrameTransformer()
 end
 
 
-local visible = true
 local t = Def.ActorFrame {
 	Name = 'WheelContainer',
 	InitCommand = function(self)
+		self:playcommand("SetPosition")
+	end,
+	SetPositionCommand = function(self)
 		self:xy(sizes.wheel.x, scy)
+		ms.ok(GAMESTATE:GetCurrentSong())
 	end,
 	BeginCommand = function(self)
 		SCREENMAN:GetTopScreen():GetMusicWheel():visible(false)
+	end,
+	OpenedGroupMessageCommand = function(self, params)
+		openedGroup = params.group
+	end,
+	ClosedGroupMessageCommand = function(self)
+		openedGroup = ""
+	end,
+	UpdateWheelBannersCommand = function(self)
+		ms.ok(GAMESTATE:GetCurrentSong())
+		self:playcommand("UpdateWheel")
+	end,
+	UpdateWheelPositionCommand = function(self)
+		self:playcommand("SetFrameTransformer", {f = getFrameTransformer()})
+	end,
+	UpdateWheelPositionCommand = function(self)
+		self:playcommand("SetPosition")
+	end,
+	UpdateWheelBannersCommand = function(self)
+		self:playcommand("SetPosition")
 	end,
 	MusicWheel:new({
 		count = 14,
@@ -349,6 +397,8 @@ local t = Def.ActorFrame {
 			return f
 		end,
 		frameUpdater = function(frame, songOrPack, offset, isCurrentItem)
+			--ms.ok(songOrPack)
+			--ms.ok(offset)
 			if songOrPack.GetAllSteps then
 				-- This is a song
 				local s = frame.s
@@ -360,7 +410,7 @@ local t = Def.ActorFrame {
 				-- This is a group
 				local s = frame.s
 				s:visible(false)
-				local g = (frame.g)
+				local g = frame.g
 				g:visible(true)
 				groupActorUpdater(g, songOrPack, isCurrentItem)
 			end
@@ -371,9 +421,10 @@ local t = Def.ActorFrame {
 		InitCommand = function(self)
 			self:diffuse(1, 0, 0, 0)
 			self:playcommand('SetPosition')
-			self:SetSize(sizes.wheel.w, sh)
 		end,
 		SetPositionCommand = function(self)
+			self:halign(0):x(-sizes.wheel.w/2)
+			self:SetSize(sizes.wheel.w*2, sh)
 		end,
 		UpdateWheelPositionCommand = function(self)
 			self:playcommand('SetPosition')
